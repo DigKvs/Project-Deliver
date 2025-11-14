@@ -11,6 +11,7 @@ export class EntregaController {
             const listEntregas = await this.entregaService.getAll();
             res.status(200).json(listEntregas.map(e => new EntregaDTO(e)));
         } catch (error) {
+            // Erro 500 para falhas inesperadas de 'find'
             res.status(500).send(error.message);
         }
     }
@@ -20,8 +21,10 @@ export class EntregaController {
             const entrega = await this.entregaService.getById(req.params.id);
             res.status(200).json(new EntregaDTO(entrega));
         } catch (error) {
-            if (error.message.includes("não encontrada")) {
-                res.status(404).send(error.message);
+            // **** MANIPULAÇÃO DE ERRO MELHORADA ****
+            if (error.message.includes("não encontrada") || error.message.includes("inválido")) {
+                // Erro 404 se não achar, 400 se o ID for inválido
+                res.status(error.message.includes("não encontrada") ? 404 : 400).send(error.message);
             } else {
                 res.status(500).send(error.message);
             }
@@ -30,27 +33,40 @@ export class EntregaController {
 
     create = async (req, res) => {
         try {
-            // O req.body (exemplo) está no comentário do Service
+            // O req.body (ex: {"descricao": "...", "produtos": [...]})
             const newEntrega = await this.entregaService.create(req.body);
             
-            // O '.populate()' não funciona no 'create', então buscamos
-            // o documento recém-criado (e populado) para retornar ao usuário.
+            // Busca o item recém-criado para "popular" os produtos
             const entregaCompleta = await this.entregaService.getById(newEntrega._id);
 
             res.status(201).json({
                 message: "Entrega criada com sucesso",
                 Entrega: new EntregaDTO(entregaCompleta),
             });
+            
         } catch (error) {
-             if (error.message.includes("não encontrado")) {
-                res.status(400).send(error.message); // Produto não encontrado (Bad Request)
-            } else {
-                res.status(500).send(error.message);
+            // **** O BLOCO CATCH UNIVERSAL ****
+            // Este bloco agora captura os erros que o Service lança
+            // (ex: "Formato do ID inválido", "Produto não encontrado", etc.)
+            
+            // Erros de validação do Mongoose (ex: 'Desc_Entrega' faltando)
+            if (error.name === 'ValidationError') {
+                return res.status(400).send({ error: error.message });
             }
+
+            // Nossos erros customizados do Service
+            // Se o erro tiver uma mensagem, envia como 400 Bad Request
+            if (error.message) {
+                return res.status(400).send({ error: error.message });
+            }
+            
+            // Se for um erro inesperado, envia 500
+            res.status(500).send({ error: "Erro interno no servidor." });
         }
     }
 
     update = async (req, res) => {
+        // (Use o mesmo bloco try/catch do 'create' aqui)
         try {
             const updatedEntrega = await this.entregaService.update(req.params.id, req.body);
             res.status(200).json({
@@ -58,8 +74,9 @@ export class EntregaController {
                 Entrega: new EntregaDTO(updatedEntrega),
             });
         } catch (error) {
-            if (error.message.includes("não encontrada")) {
-                res.status(404).send(error.message);
+            // (Copie o bloco catch do 'create' para cá)
+            if (error.message.includes("não encontrada") || error.message.includes("inválido")) {
+                res.status(400).send(error.message);
             } else {
                 res.status(500).send(error.message);
             }

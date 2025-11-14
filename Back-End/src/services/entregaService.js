@@ -1,73 +1,114 @@
 import { EntregaRepository } from '../repositories/entregaRepository.js';
-import { ProdutoRepository } from './produtoRepository.js'; // Importação extra!
+import { ProdutoRepository } from '../repositories/produtoRepository.js';
+import mongoose from 'mongoose';
 
 export class EntregaService {
     constructor() {
         this.entregaRepository = new EntregaRepository();
-        this.produtoRepository = new ProdutoRepository(); // Instancia o repo de Produto
+        this.produtoRepository = new ProdutoRepository();
     }
 
     async getAll() {
-        // Já virão "populados" graças à sobrescrita no repositório
         return await this.entregaRepository.findAll();
     }
 
     async getById(id) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new Error("Formato do ID da Entrega inválido");
+        }
         const entrega = await this.entregaRepository.findById(id);
         if (!entrega) {
             throw new Error("Entrega não encontrada");
         }
         return entrega;
     }
-
+    
     /**
-     * O 'entregaData' (req.body) deve ser algo como:
-     * {
-     * "descricao": "Entrega do Cliente X",
-     * "produtos": [
-     * { "produto": "id_mongoose_do_produto_1", "ordem": 1 },
-     * { "produto": "id_mongoose_do_produto_2", "ordem": 2 }
-     * ]
-     * }
+     * Função auxiliar para validar a lista de produtos.
+     * Reutilizável para 'create' e 'update'.
      */
-    async create(entregaData) {
-        // 1. Validação de negócio: Verificar se os produtos existem
-        if (entregaData.produtos && entregaData.produtos.length > 0) {
-            for (const item of entregaData.produtos) {
-                const produtoExiste = await this.produtoRepository.findById(item.produto);
-                if (!produtoExiste) {
-                    throw new Error(`Produto com ID ${item.produto} não encontrado.`);
-                }
+    async validarEProcessarProdutos(produtosArray) {
+        if (!produtosArray || !Array.isArray(produtosArray)) {
+            throw new Error("O campo 'produtos' deve ser um array.");
+        }
+        
+        const produtosValidados = [];
+
+        for (const item of produtosArray) {
+            const produtoInput = item.produto;
+            
+            if (!produtoInput) {
+                throw new Error("O 'produto' (ID ou Nome) é obrigatório.");
             }
+
+            let produtoEncontrado = null;
+
+            // 1. Tenta encontrar por ID
+            if (mongoose.Types.ObjectId.isValid(produtoInput)) {
+                produtoEncontrado = await this.produtoRepository.findById(produtoInput);
+            }
+
+            // 2. Se não achou por ID, tenta encontrar por Nome
+            if (!produtoEncontrado) {
+                // **** AQUI ESTÁ A MUDANÇA ****
+                // Usando o novo método 'findByNome'
+                produtoEncontrado = await this.produtoRepository.findByNome(produtoInput);
+            }
+
+            // 3. Se não achou de jeito nenhum, lança o erro
+            if (!produtoEncontrado) {
+                throw new Error(`Produto "${produtoInput}" não encontrado por ID ou Nome.`);
+            }
+            
+            // 4. Se achou, guarda o ID real e a ordem
+            produtosValidados.push({
+                produto: produtoEncontrado._id, // Salva o ID real
+                OrdemEntrega: item.ordem || 0
+            });
+        }
+        
+        return produtosValidados;
+    }
+
+    async create(entregaData) {
+        const { descricao, produtos, status } = entregaData; 
+
+        if (!descricao) {
+            throw new Error("A 'descricao' é obrigatória.");
         }
 
-        // 2. Mapear o DTO de entrada para o schema do banco
+        // Usa a função auxiliar
+        const produtosValidados = await this.validarEProcessarProdutos(produtos);
+
         const dataToCreate = {
-            Desc_Entrega: entregaData.descricao,
-            produtos: entregaData.produtos.map(p => ({
-                produto: p.produto, // O ID
-                OrdemEntrega: p.ordem
-            }))
+            Desc_Entrega: descricao,
+            Status: status || 'Pendente',
+            produtos: produtosValidados
         };
 
         return await this.entregaRepository.create(dataToCreate);
     }
 
     async update(id, entregaData) {
-        // Você também deve validar os produtos aqui, se necessário
+        // Garante que a entrega existe
+        await this.getById(id);
         
-        const dataToUpdate = {
-            Desc_Entrega: entregaData.descricao,
-            produtos: entregaData.produtos.map(p => ({
-                produto: p.produto,
-                OrdemEntrega: p.ordem
-            }))
-        };
+        const { descricao, produtos, status } = entregaData;
+        const dataToUpdate = {};
+        
+        if (descricao) dataToUpdate.Desc_Entrega = descricao;
+        if (status) dataToUpdate.Status = status;
+        
+        // Usa a função auxiliar
+        if (produtos) {
+            dataToUpdate.produtos = await this.validarEProcessarProdutos(produtos);
+        }
+
+        if (Object.keys(dataToUpdate).length === 0) {
+            throw new Error("Nenhum dado válido fornecido para atualização.");
+        }
 
         const entrega = await this.entregaRepository.update(id, dataToUpdate);
-        if (!entrega) {
-            throw new Error("Entrega não encontrada para atualizar");
-        }
         return entrega;
     }
 

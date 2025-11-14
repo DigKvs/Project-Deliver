@@ -2,6 +2,10 @@ export class EntregaDTO {
     constructor(entrega) {
         this.id = entrega._id;
         this.descricao = entrega.Desc_Entrega;
+        this.status = entrega.Status;
+
+        this.criadoEm = entrega.createdAt;
+        this.atualizadoEm = entrega.updatedAt;
 
         // Verifica se 'produtos' existe e foi populado
         if (entrega.produtos && entrega.produtos.length > 0) {
