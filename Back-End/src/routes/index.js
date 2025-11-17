@@ -2,7 +2,7 @@ import express from "express";
 import authRotes from "./authRoutes.js"
 import user from "./userRoutes.js";
 import produto from "./produtoRoutes.js"
-import entrega from "../models/Entrega.js";
+import entrega from "./entregaRoutes.js";
 
 
 const routes = (app) => {

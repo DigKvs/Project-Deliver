@@ -1,23 +1,28 @@
-import jwt from "jsonwebtoken";
-import jsonSecret from "../config/jsonSecret.js";
+import jwt from 'jsonwebtoken';
 
-export default async(req, res, next) => {
-    const token = req.headers.authorization;
+export const authMiddleware = (req, res, next) => {
+    // Pega o token do cabeçalho 'Authorization'
+    const authHeader = req.headers.authorization;
 
-    if(!token){
-        return res.status(401).send("Access Token não informado");
+    // 1. Verifica se o token foi enviado
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).send({ error: "Token não fornecido ou mal formatado." });
     }
 
-    const[, accessToken] = token.split(" ");
+    // 2. Pega o token (formato: "Bearer <token>")
+    const token = authHeader.split(' ')[1];
 
-    try{
-        const decoded = jwt.verify(accessToken, jsonSecret.secret);
-        const{id, email} = decoded;
-        req.userId = id;
-        req.userEmail = email;
+    try {
+        // 3. Verifica se o token é válido
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // 4. Se for válido, salva os dados do usuário no 'req'
+        // para que outras rotas possam usá-lo
+        req.user = decoded; // ex: { id: '...', email: '...' }
 
-        return next();
-    }catch(error){
-        return res.status(401).send("Usuario nao autorizado");
+        next(); // Permite que a requisição continue
+    } catch (error) {
+        // 5. Se for inválido ou expirado
+        res.status(401).send({ error: "Token inválido ou expirado." });
     }
-}
+};

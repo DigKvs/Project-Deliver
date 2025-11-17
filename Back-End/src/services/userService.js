@@ -1,58 +1,57 @@
-import bcrypt from "bcryptjs";
-import { UserRepository } from "../repositories/userRepository.js";
-import { UserDTO } from "../dtos/userDTO.js";
+import { UserRepository } from '../repositories/userRepository.js';
+import { UserDTO } from '../dtos/userDTO.js'; // Importe o DTO
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'; // Importe o JWT
 
-const { hash } = bcrypt;
-
-export class UserService{
-    constructor(){
-        this.UserRepository = new UserRepository();
+export class UserService {
+    constructor() {
+        this.userRepository = new UserRepository();
     }
 
-
-    register = async (userData) => {
-        //implementar o findByEmail
-        const userExists = await this.UserRepository.findByEmail(userData.email)
-
-        if (userExists){
-            throw new Error("Usuario ja cadastrado")
-
+    // ---- ADICIONE ESTE NOVO MÉTODO ----
+    async login(email, password) {
+        // 1. Encontra o usuário pelo email
+        const user = await this.userRepository.findByEmail(email);
+        if (!user) {
+            throw new Error("Email ou senha inválidos."); // Erro genérico
         }
-        const passwordHash = await hash(userData.password, 8)
-        const userToCreate = {
-            name: userData.name,
-            email: userData.email,
-            password: passwordHash,
+
+        // 2. Compara a senha enviada com a senha hashada no banco
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            throw new Error("Email ou senha inválidos.");
         }
-        const createdUser = await this.UserRepository.create(userToCreate);
-        return new UserDTO(createdUser)
+
+        // 3. Gera o Token
+        const payload = { 
+            id: user._id, 
+            email: user.email 
+        };
+        
+        const token = jwt.sign(
+            payload,
+            process.env.JWT_SECRET, // Sua chave secreta do .env
+            { expiresIn: '8h' }    // O token expira em 8 horas
+        );
+
+        // 4. Retorna o token e os dados do usuário (sem a senha)
+        return { 
+            token, 
+            user: new UserDTO(user) 
+        };
+    }
+    // --------------------------------------
+
+    // (Seu método 'register' ou 'createUser' existente)
+    async register(userData) {
+        const { email } = userData;
+        const userExists = await this.userRepository.search({ email });
+        if (userExists.length > 0) {
+            throw new Error("Este email já está cadastrado.");
+        }
+        // O hash da senha é feito pelo 'pre-save' no seu 'userModel.js'
+        return await this.userRepository.create(userData);
     }
 
-    getAllUser = async () => {
-        return await this.UserRepository.findAll();
-    }
-    getUserById = async (id) => {
-        const foundUser = await this.UserRepository.findById(id);
-        if (!foundUser){
-            throw new Error("User não encontrado!")
-        }
-        return foundUser
-    }
-    updateUser = async (id, UserData) => {
-        const updatedUser = await this.UserRepository.update(id, UserData);
-        if (!updatedUser){
-            throw new Error("Autor não encontrado!")
-        }
-        return updatedUser
-    }
-    deleteUser = async (id) => {
-        const deleteUser = await this.UserRepository.delete(id);
-        if (!deleteUser){
-            throw new Error("Autor não encontrado!")
-        }
-        return deleteUser
-    }
-
-
-
+    // (Seus outros métodos: getAllUser, getUserById, etc.)
 }
