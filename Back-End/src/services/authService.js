@@ -1,4 +1,4 @@
-import { user } from "../models/User.js";
+import  User  from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import jsonSecret from "../config/jsonSecret.js";
@@ -9,7 +9,7 @@ const { compare } = bcrypt;
 class AuthService {
     async login(dto){
         try {
-            const userVerify = await user.findOne({
+            const userVerify = await User.findOne({
                 email: dto.email,
 
             }).select("id email password");

@@ -1,204 +1,312 @@
-import express from "express"
-import UserController from "../controllers/userController.js"
+import express from 'express';
+import { UserController } from '../controllers/userController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
-const routes = express.Router();
-const userController = new UserController();
-
-/**
- * @swagger
- * tags:
- *   - name: Usuarios
- *     description: Endpoints para gerenciamento de usuário
- */
+const router = express.Router();
+const controller = new UserController();
 
 /**
  * @swagger
  * components:
  *   schemas:
+ *     # --- Schemas de User ---
  *     User:
  *       type: object
  *       properties:
  *         id:
  *           type: string
- *           example: "663ccf1e934d1eab3a4ed27f"
- *         name:
+ *           description: O ID do usuário (gerado pelo Mongoose)
+ *         nome:
  *           type: string
- *           example: "Maria Oliveira"
  *         email:
  *           type: string
- *           format: email
- *           example: "maria.oliveira@example.com"
- *         password:
+ *         criadoEm:
  *           type: string
- *           example: "$2a$10$ExemploDeHashBcrypt"
+ *           format: date-time
+ *         atualizadoEm:
+ *           type: string
+ *           format: date-time
  *
- *     UserInput:
+ *     UserRegister:
  *       type: object
- *       required:
- *         - name
- *         - email
- *         - password
+ *       required: [nome, email, password]
  *       properties:
- *         name:
+ *         nome:
  *           type: string
- *           example: "Maria Oliveira"
+ *           example: "Meu Nome"
  *         email:
  *           type: string
- *           format: email
- *           example: "maria.oliveira@example.com"
+ *           example: "email@exemplo.com"
  *         password:
  *           type: string
  *           format: password
- *           example: "senhaSegura123"
- */
-
-/**
- * @swagger
- * /user:
- *   get:
- *     summary: Lista todos os usuários
- *     tags:
- *       - Usuarios
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de usuários retornada com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       401:
- *         description: Não autorizado
- */
-
-
-routes.get("/user", userController.getAllUser);
-
-/**
- * @swagger
- * /user:
- *   post:
- *     summary: cria um usuario
- *     tags:
- *       - Usuarios
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Cria um usuario
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       401:
- *         description: Não autorizado
- */
-
-
-routes.post("/user", userController.createUser);
-
-/**
- * @swagger
- * /user/{id}:
- *   put:
- *     summary: Atualiza um usuário pelo ID
- *     tags:
- *       - Usuarios
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
+ *           example: "senha123"
+ *
+ *     UserLogin:
+ *       type: object
+ *       required: [email, password]
+ *       properties:
+ *         email:
  *           type: string
- *         description: ID do usuário
+ *           example: "email@exemplo.com"
+ *         password:
+ *           type: string
+ *           format: password
+ *           example: "senha123"
+ *
+ *     UserUpdate:
+ *       type: object
+ *       properties:
+ *         nome:
+ *           type: string
+ *           example: "Meu Nome Atualizado"
+ *         email:
+ *           type: string
+ *           example: "novoemail@exemplo.com"
+ *
+ *     # --- Schemas de Produto ---
+ *     Produto:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "67f5b6e9a1b2c3d4e5f6a7b8"
+ *         nome:
+ *           type: string
+ *           example: "Quadrado"
+ *         criadoEm:
+ *           type: string
+ *           format: date-time
+ *         atualizadoEm:
+ *           type: string
+ *           format: date-time
+ *
+ *     ProdutoInput:
+ *       type: object
+ *       required: [nome]
+ *       properties:
+ *         nome:
+ *           type: string
+ *           example: "Hexagono"
+ *
+ *     # --- Schemas de Entrega ---
+ *     ProdutoEmEntrega:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         nome:
+ *           type: string
+ *         ordem:
+ *           type: number
+ *
+ *     Entrega:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *         descricao:
+ *           type: string
+ *         status:
+ *           type: string
+ *           enum: [Pendente, Em Rota, Entregue, Cancelada]
+ *         produtos:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProdutoEmEntrega'
+ *         criadoEm:
+ *           type: string
+ *           format: date-time
+ *         atualizadoEm:
+ *           type: string
+ *           format: date-time
+ *
+ *     ProdutoInputEntrega:
+ *       type: object
+ *       required: [produto, ordem]
+ *       properties:
+ *         produto:
+ *           type: string
+ *           description: O ID ou o Nome (único) do produto
+ *           example: "Quadrado"
+ *         ordem:
+ *           type: number
+ *           example: 1
+ *
+ *     EntregaCreateInput:
+ *       type: object
+ *       required: [descricao, produtos]
+ *       properties:
+ *         descricao:
+ *           type: string
+ *           example: "Entrega do Cliente X"
+ *         produtos:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProdutoInputEntrega'
+ *
+ *     EntregaUpdateInput:
+ *       type: object
+ *       properties:
+ *         descricao:
+ *           type: string
+ *         status:
+ *           type: string
+ *           enum: [Entregue, Cancelada]
+ *         produtos:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProdutoInputEntrega'
+ *
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Usuários e Autenticação
+ *     description: Endpoints para registro, login e gerenciamento de usuários
+ *   - name: Produtos
+ *     description: Endpoints para gerenciar produtos (Requer Autenticação)
+ *   - name: Entregas
+ *     description: Endpoints para gerenciar entregas e fila (Requer Autenticação)
+ */
+
+// --- ROTAS DE USUÁRIO ---
+
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Realiza o login do usuário
+ *     tags: [Usuários e Autenticação]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/UserInput'
+ *             $ref: '#/components/schemas/UserLogin'
  *     responses:
- *       200:
- *         description: Usuário atualizado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Dados inválidos
- *       401:
- *         description: Não autorizado
- *       404:
- *         description: Usuário não encontrado
+ *       '200':
+ *         description: Login bem-sucedido
+ *       '401':
+ *         description: Email ou senha inválidos
  */
-
-routes.put("/user/:id", userController.updateUser);
+router.post('/login', controller.login);
 
 /**
  * @swagger
- * /user/{id}:
+ * /users:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     tags: [Usuários e Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserRegister'
+ *     responses:
+ *       '201':
+ *         description: Usuário criado com sucesso
+ *       '400':
+ *         description: Erro de validação
+ */
+router.post('/users', controller.registerUser);
+
+// Middleware para proteger as rotas seguintes
+// router.use(authMiddleware);
+
+/**
+ * @swagger
+ * /users:
  *   get:
- *     summary: Busca um usuário pelo ID
- *     tags:
- *       - Usuarios
+ *     summary: Lista todos os usuários
+ *     tags: [Usuários e Autenticação]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: ID do usuário
  *     responses:
- *       200:
- *         description: Usuário encontrado com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       401:
- *         description: Não autorizado
- *       404:
- *         description: Usuário não encontrado
+ *       '200':
+ *         description: Lista de usuários
+ *       '401':
+ *         description: Token inválido ou não fornecido
  */
-
-routes.get("/user/:id", userController.getUserById);
+router.get('/users', controller.getAllUser);
 
 /**
  * @swagger
- * /user/{id}:
- *   delete:
- *     summary: Remove um usuário pelo ID
- *     tags:
- *       - Usuarios
+ * /users/{id}:
+ *   get:
+ *     summary: Busca um usuário específico pelo ID
+ *     tags: [Usuários e Autenticação]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: string
- *         description: ID do usuário
+ *         required: true
  *     responses:
- *       204:
- *         description: Usuário removido com sucesso (sem conteúdo)
- *       401:
- *         description: Não autorizado
- *       404:
+ *       '200':
+ *         description: Detalhes do usuário
+ *       '404':
  *         description: Usuário não encontrado
  */
+router.get('/users/:id', controller.getUserById);
 
-routes.delete("/user/:id", userController.deletedUser);
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     summary: Atualiza um usuário específico
+ *     tags: [Usuários e Autenticação]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdate'
+ *     responses:
+ *       '200':
+ *         description: Usuário atualizado
+ *       '404':
+ *         description: Usuário não encontrado
+ */
+router.put('/users/:id', controller.updateUser);
 
-export default routes;
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Deleta um usuário específico
+ *     tags: [Usuários e Autenticação]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *     responses:
+ *       '200':
+ *         description: Usuário deletado
+ *       '404':
+ *         description: Usuário não encontrado
+ */
+router.delete('/users/:id', controller.deletedUser);
 
-
+export default router;

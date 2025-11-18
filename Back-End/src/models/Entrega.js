@@ -6,7 +6,13 @@ const entregaSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    
+    Status: {
+        type: String,
+        required: true,
+        // Enum define os únicos valores permitidos
+        enum: ['Pendente', 'Em Rota', 'Entregue', 'Cancelada'],
+        default: 'Pendente' // Valor padrão ao criar
+    },
     // Relação N:N com Produtos
     produtos: [
         {
