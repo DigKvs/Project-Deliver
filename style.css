@@ -2,10 +2,12 @@
     --primary-color: #6F0825;
     --cinza-border: #262626;
     --background-color: #141414;
+    --background-light-color: #222222;
     --text-color: #ffffff;
     --third-color: #d4d4d4;
     --notification-color: #ADDDF8;
     --link-color: #4285F4;
+    --header-background: #1A1A1A;
 }
 
 * {
@@ -284,8 +286,6 @@ footer {
     cursor: pointer;
 }
 
-/* ----------------------- Pedidos ----------------------- */
-
 header {
     height: 10%;
     font-size: 75%;
@@ -293,11 +293,10 @@ header {
     align-items: center;
     justify-content: center;
     color: var(--text-color);
-    background-color: var(--secondary-color);
+    background-color: var(--header-background);
     box-shadow: rgba(0, 0, 0, 0.1) 0px 15px 20px -10px, rgba(0, 0, 0, 0.04) 0px 5px 5px -10px;
     position: relative;
     z-index: 10;
-    border-radius: 0% 0% 50px 50px;
 }
 
 .user {
@@ -309,11 +308,22 @@ header {
 }
 
 .headLinks {
-    font-size:250%;
-    margin: 0px 0.5%;
-    text-decoration: underline;
-    color: var(--primary-color);
+    font-size:150%;
+    margin: 0px 1%;
+    text-decoration: none;
     cursor: pointer;
+    border-radius: 10px;
+
+}
+
+.activeLink {
+    padding: 10px 30px;
+    background-color: var(--background-color);
+    border: solid 1px rgba(100, 100, 100, 0.3);
+}
+
+.activeLink:hover {
+    background-color: var(--background-light-color);
 }
 
 mainPedidos {
@@ -339,24 +349,25 @@ mainPedidos {
 }
 
 .switch {
-  --_switch-bg-clr: #7e212b;
-  --_switch-padding: 4px; /* padding around button*/
-  --_slider-bg-clr: #9b111e; /* slider color unchecked */
-  --_slider-bg-clr-on: #9b111e; /* slider color checked */
+  --_switch-bg-clr: var(--primary-color);
+  --_switch-padding: 4px;
+  --_slider-bg-clr: #9b111e;
+  --_slider-bg-clr-on: #9b111e;
   --_slider-txt-clr: #ffffff;
-  --_label-padding: 1rem 2rem; /* padding around the labels -  this gives the switch it's global width and height */
+  --_label-padding: 1rem 2rem;
   --_switch-easing: cubic-bezier(
     0.47,
     1.64,
     0.41,
     0.8
-  ); /* easing on toggle switch */
+  );
   color: white;
   width: fit-content;
   display: flex;
   justify-content: center;
   position: relative;
   border-radius: 9999px;
+  border: #ffffff;
   cursor: pointer;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -388,7 +399,7 @@ mainPedidos {
   border-radius: inherit;
   transition: inset 150ms ease-in-out;
 }
-/* switch slider */
+
 .switch::before {
   background-color: var(--_slider-bg-clr);
   inset: var(--_switch-padding) 50% var(--_switch-padding)
@@ -401,13 +412,13 @@ mainPedidos {
     inset 0 1px 1px rgba(0, 0, 0, 0.3),
     0 1px rgba(255, 255, 255, 0.3);
 }
-/* switch bg color */
+
 .switch::after {
   background-color: var(--_switch-bg-clr);
   inset: 0;
   z-index: -2;
 }
-/* switch hover & focus */
+
 .switch:focus-within::after {
   inset: -0.25rem;
 }
@@ -417,7 +428,7 @@ mainPedidos {
   transition-delay: 0ms;
   transition-duration: 100ms;
 }
-/* switch hover */
+
 .switch:has(input:checked):hover::before {
   inset: var(--_switch-padding) var(--_switch-padding) var(--_switch-padding)
     45%;
@@ -426,13 +437,13 @@ mainPedidos {
   inset: var(--_switch-padding) 45% var(--_switch-padding)
     var(--_switch-padding);
 }
-/* checked - move slider to right */
+
 .switch:has(input:checked)::before {
   background-color: var(--_slider-bg-clr-on);
   inset: var(--_switch-padding) var(--_switch-padding) var(--_switch-padding)
     50%;
 }
-/* checked - set opacity */
+
 .switch > span:last-of-type,
 .switch > input:checked + span:first-of-type {
   opacity: 0.75;
@@ -451,16 +462,12 @@ mainPedidos {
     flex-direction: row;
 }
 
-/*
- * 1. CONTAINER PRINCIPAL (pinChoice)
- * Aplica espaçamento vertical e garante que o label não empurre o select.
- */
 .pinChoice {
-    background-color: #f7f7f7;
+    background-color: var(--primary-color);
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 20px; /* Aumentei o padding para dar mais ar */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Sombra mais visível */
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     max-width: 400px; 
 }
 
@@ -472,59 +479,44 @@ mainPedidos {
 .pinChoice h3 {
     font-family: sans-serif;
     font-size: 1.3em;
-    color: #333333;
-    text-align: center; /* Centraliza o título */
+    color: var(--text-color);
+    text-align: center;
     margin-top: 0;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #e0e0e0;
 }
 
-/*
- * 2. WRAPPER DE CADA LINHA (select-wrapper)
- * Garante alinhamento horizontal perfeito.
- */
 .select-wrapper {
-    display: flex; /* Alinha label e select lado a lado */
+    display: flex;
     align-items: center; 
-    gap: 15px; /* Espaço entre label e select */
+    gap: 15px;
     position: relative;
-    margin-bottom: 12px; /* Adiciona espaçamento vertical entre os campos */
+    margin-bottom: 12px;
 }
 
-/*
- * 3. LABEL (Peça 1, Peça 2, etc.)
- * Define uma largura fixa para que os selects comecem todos no mesmo ponto.
- */
 .select-wrapper label {
     font-family: sans-serif;
     font-size: 15px;
-    color: #555555;
-    /* Define uma largura fixa para alinhar os selects */
+    color: var(--text-color);
     width: 70px; 
-    text-align: right; /* Alinha o texto do label à direita */
-    margin-bottom: 0; /* Remove margem desnecessária */
+    text-align: right;
+    margin-bottom: 0;
 }
 
-/*
- * 4. SELECT (A Caixa de Seleção)
- * Faz com que a caixa ocupe todo o espaço restante, garantindo larguras iguais.
- */
+
 .select-wrapper select {
-    flex-grow: 1; /* Ocupa todo o espaço restante, garantindo largura igual para todos os selects */
-    width: auto; /* Anula o 100% */
-    
-    /* Estilos Visuais */
+    flex-grow: 1;
+    width: auto;
     padding: 8px 30px 8px 12px;
     border: 1px solid #c9c9c9;
     border-radius: 4px;
-    background-color: #ffffff;
-    color: #333333;
+    background-color: var(--cinza-border);
+    color: var(--text-color);
     font-family: sans-serif;
     font-size: 15px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    
-    /* Remoção da Seta Nativa */
+
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -536,15 +528,11 @@ mainPedidos {
     outline: none;
 }
 
-/*
- * 5. SETA CUSTOMIZADA (Melhora o visual)
- */
 .select-wrapper::after {
     content: '▼';
     position: absolute;
     top: 50%;
     right: 12px; 
-    /* Ajusta a posição da seta para que ela fique no final do select */
     transform: translateY(-50%); 
     pointer-events: none;
     color: #999999;
@@ -561,11 +549,16 @@ mainPedidos {
     padding: 10px 130px;
     margin: 15px;
     background-color: #7e212b;
-    border:#000000 solid 2px;
+    border:#ffffff solid 1px;
     color: #ffffff;
     cursor: pointer;
 }
 
 .buttonPedido:hover {
     
+}
+
+.select-wrapper select option {
+    color: #ffffff;
+    background-color: #385d77
 }
