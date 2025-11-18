@@ -335,7 +335,6 @@ mainPedidos {
 
 .formPin {
     display: grid;
-    grid-template-columns: ;
     grid-template-rows: 1fr 3fr repeat(2, 1fr);
 }
 
