@@ -19,3 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+paginaPedido = () => {
+    let urlPedido = "pedidos.html";
+    window.location.href = urlPedido;
+}
