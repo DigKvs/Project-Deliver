@@ -6,112 +6,127 @@ export class UserController {
         this.userService = new UserService();
     }
 
-    // --- Métodos de Autenticação ---
-
-    /**
-     * Rota: POST /login
-     */
+    // =============================================================
+    //  LOGIN
+    // =============================================================
     login = async (req, res) => {
         try {
             const { email, password } = req.body;
+
             if (!email || !password) {
-                return res.status(400).send({ error: "Email e senha são obrigatórios." });
+                return res.status(400).json({
+                    error: "Email e senha são obrigatórios."
+                });
             }
 
-            const loginData = await this.userService.login(email, password);
-            
-            res.status(200).json({ 
-                message: "Login bem-sucedido!",
-                token: loginData.token,
-                user: loginData.user
-            });
-        } catch (error) {
-            res.status(401).send({ error: error.message }); // 401 Unauthorized
-        }
-    }
+            const result = await this.userService.login(email, password);
 
-    /**
-     * Rota: POST /users
-     */
+            return res.status(200).json({
+                message: "Login bem-sucedido",
+                token: result.token,
+                user: new UserDTO(result.user)
+            });
+
+        } catch (error) {
+            return res.status(401).json({ error: error.message });
+        }
+    };
+
+    // =============================================================
+    //  REGISTRO DE USUÁRIO
+    // =============================================================
     registerUser = async (req, res) => {
         try {
-            // O seu userModel.js já faz o hash da senha
-            const newUser = await this.userService.register(req.body);
-            res.status(201).json({
+            const createdUser = await this.userService.register(req.body);
+
+            return res.status(201).json({
                 message: "Usuário criado com sucesso",
-                User: new UserDTO(newUser),
+                user: new UserDTO(createdUser),
             });
+
         } catch (error) {
-            res.status(400).send({ error: error.message });
+            return res.status(400).json({ error: error.message });
         }
-    }
+    };
 
-    // --- Métodos de Gerenciamento (Protegidos) ---
-
-    /**
-     * Rota: GET /users
-     */
+    // =============================================================
+    //  LISTAR TODOS OS USUÁRIOS
+    // =============================================================
     getAllUser = async (req, res) => {
         try {
-            const listUsers = await this.userService.getAllUser();
-            res.status(200).json(listUsers.map((User) => new UserDTO(User)));
-        }
-        catch(error){
-            res.status(500).send(error.message)
-        }
-    }
+            const users = await this.userService.getAllUser();
 
-    /**
-     * Rota: GET /users/:id
-     */
+            return res.status(200).json(
+                users.map((u) => new UserDTO(u))
+            );
+
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    };
+
+    // =============================================================
+    //  BUSCAR USUÁRIO POR ID
+    // =============================================================
     getUserById = async (req, res) => {
         try {
-            const UserById = await this.userService.getUserById(req.params.id);
-            if (!UserById){
-                return res.status(404).send("User não encontrado")
-            }
-            res.status(200).json(new UserDTO(UserById))
-            
-        }
-        catch(error){
-            res.status(500).send(error.message)
-        }
-    }
+            const user = await this.userService.getUserById(req.params.id);
 
-    /**
-     * Rota: PUT /users/:id
-     */
-    updateUser = async(req, res) => {
+            if (!user) {
+                return res.status(404).json({
+                    error: "Usuário não encontrado"
+                });
+            }
+
+            return res.status(200).json(new UserDTO(user));
+
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    };
+
+    // =============================================================
+    //  UPDATE DE USUÁRIO
+    // =============================================================
+    updateUser = async (req, res) => {
         try {
-            // Nota: Se a senha for atualizada, o model/service precisa
-            // fazer o hash dela novamente.
-            const updateUser = await this.userService.updateUser(req.params.id, req.body);
-            if (!updateUser){
-                return res.status(404).send("User não encontrado")
-            }
-            res.status(200).json({
-                message: "Usuário atualizado com sucesso",
-                Users: new UserDTO(updateUser),
-            })
-        }
-        catch(error){
-            res.status(500).send(error.message)
-        }
-    }
+            const updatedUser = await this.userService.updateUser(req.params.id, req.body);
 
-    /**
-     * Rota: DELETE /users/:id
-     */
+            if (!updatedUser) {
+                return res.status(404).json({
+                    error: "Usuário não encontrado"
+                });
+            }
+
+            return res.status(200).json({
+                message: "Usuário atualizado com sucesso",
+                user: new UserDTO(updatedUser),
+            });
+
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
+        }
+    };
+
+    // =============================================================
+    //  DELETE DE USUÁRIO
+    // =============================================================
     deletedUser = async (req, res) => {
         try {
-            const deleteUser = await this.userService.deleteUser(req.params.id);
-            if (!deleteUser){
-                return res.status(404).send("User não encontrado")
+            const deletedUser = await this.userService.deleteUser(req.params.id);
+
+            if (!deletedUser) {
+                return res.status(404).json({
+                    error: "Usuário não encontrado"
+                });
             }
-            res.status(200).json("Usuário deletado")
+
+            return res.status(200).json({
+                message: "Usuário deletado com sucesso"
+            });
+
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
-        catch(error){
-            res.status(500).send(error.message)
-        }
-    }
+    };
 }

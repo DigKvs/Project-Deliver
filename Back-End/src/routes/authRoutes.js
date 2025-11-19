@@ -1,5 +1,5 @@
-import express from "express"
-import AuthController from "../controllers/authController.js"
+import express from "express";
+import AuthController from "../controllers/authController.js";
 
 const routes = express.Router();
 
@@ -7,7 +7,7 @@ const routes = express.Router();
  * @swagger
  * tags:
  *   - name: Autenticação
- *     description: Endpoints relacionados à autenticação de usuários
+ *     description: Endpoints para login e geração de token
  */
 
 /**
@@ -34,7 +34,7 @@ const routes = express.Router();
  *       properties:
  *         accessToken:
  *           type: string
- *           description: Token JWT gerado após login bem-sucedido
+ *           description: Token JWT gerado após login
  *           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  */
 
@@ -43,42 +43,25 @@ const routes = express.Router();
  * /auth/login:
  *   post:
  *     summary: Autentica um usuário e retorna um token JWT
- *     tags:
- *       - Autenticação
+ *     tags: [Autenticação]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *                 example: "usuario@example.com"
- *               password:
- *                 type: string
- *                 format: password
- *                 example: "senha123"
+ *             $ref: '#/components/schemas/AuthLoginInput'
  *     responses:
  *       200:
  *         description: Login realizado com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 accessToken:
- *                   type: string
- *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *               $ref: '#/components/schemas/AuthLoginResponse'
  *       400:
  *         description: Requisição inválida
  *       401:
  *         description: Credenciais inválidas
  */
-routes.post("/auth/login", AuthController.login)
+routes.post("/auth/login", AuthController.login);
 
-export default routes
+export default routes;

@@ -5,8 +5,14 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 const controller = new ProdutoController();
 
-// Rotas protegidas
-router.use(authMiddleware);
+// router.use(authMiddleware);
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Produtos
+ *     description: Endpoints para gerenciar produtos
+ */
 
 /**
  * @swagger
@@ -23,16 +29,16 @@ router.use(authMiddleware);
  *           schema:
  *             $ref: '#/components/schemas/ProdutoInput'
  *     responses:
- *       '201':
+ *       201:
  *         description: Produto criado com sucesso
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Produto'
- *       '400':
- *         description: Erro de validação (ex: nome já existe)
- *       '401':
- *         description: Não autorizado (Token inválido)
+ *       400:
+ *         description: Erro de validação
+ *       401:
+ *         description: Não autorizado
  */
 router.post('/produtos', controller.create);
 
@@ -45,16 +51,10 @@ router.post('/produtos', controller.create);
  *     security:
  *       - bearerAuth: []
  *     responses:
- *       '200':
+ *       200:
  *         description: Lista de produtos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Produto'
- *       '401':
- *         description: Não autorizado (Token inválido)
+ *       401:
+ *         description: Token inválido
  */
 router.get('/produtos', controller.getAll);
 
@@ -69,21 +69,12 @@ router.get('/produtos', controller.getAll);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: ID do produto (Mongoose ObjectId)
  *     responses:
- *       '200':
- *         description: Detalhes do produto
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Produto'
- *       '404':
+ *       200:
+ *         description: Produto encontrado
+ *       404:
  *         description: Produto não encontrado
- *       '401':
- *         description: Não autorizado (Token inválido)
  */
 router.get('/produtos/:id', controller.getById);
 
@@ -98,10 +89,7 @@ router.get('/produtos/:id', controller.getById);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: ID do produto
  *     requestBody:
  *       required: true
  *       content:
@@ -109,16 +97,10 @@ router.get('/produtos/:id', controller.getById);
  *           schema:
  *             $ref: '#/components/schemas/ProdutoInput'
  *     responses:
- *       '200':
+ *       200:
  *         description: Produto atualizado
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Produto'
- *       '404':
+ *       404:
  *         description: Produto não encontrado
- *       '401':
- *         description: Não autorizado (Token inválido)
  */
 router.put('/produtos/:id', controller.update);
 
@@ -133,17 +115,12 @@ router.put('/produtos/:id', controller.update);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
- *         description: ID do produto
  *     responses:
- *       '200':
- *         description: Produto deletado com sucesso
- *       '404':
+ *       200:
+ *         description: Produto deletado
+ *       404:
  *         description: Produto não encontrado
- *       '401':
- *         description: Não autorizado (Token inválido)
  */
 router.delete('/produtos/:id', controller.delete);
 

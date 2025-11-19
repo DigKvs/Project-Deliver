@@ -13,6 +13,10 @@ export class EntregaService {
      * Tenta promover a próxima entrega pendente para "Em Rota".
      * Só deve ser chamado quando uma rota é concluída ou cancelada.
      */
+    async getEmRota() {
+        // Usa o findAll do repositório passando o filtro { Status: 'Em Rota' }
+        return await this.entregaRepository.findAll({ Status: 'Em Rota' });
+    }
     async #promoverProximaEntrega() {
         try {
             // Verifica se já existe alguma entrega "Em Rota"

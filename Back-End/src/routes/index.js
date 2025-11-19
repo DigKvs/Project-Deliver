@@ -8,10 +8,10 @@ import entrega from "./entregaRoutes.js";
 const routes = (app) => {
     app.route("/").get((req, res) => res.status(200).send
     ("Node.js com Express"));    
-
+    
     app.use(express.json());
-    app.use(authRotes);
     app.use(user);
+    app.use(authRotes);
     app.use(produto);
     app.use(entrega);
 }

@@ -15,7 +15,18 @@ export class EntregaController {
             res.status(500).send(error.message);
         }
     }
+// ... outros métodos ...
 
+    getEmRota = async (req, res) => {
+        try {
+            const listEntregas = await this.entregaService.getEmRota();
+            res.status(200).json(listEntregas.map(e => new EntregaDTO(e)));
+        } catch (error) {
+            res.status(500).send(error.message);
+        }
+    }
+
+    // ...
     getById = async (req, res) => {
         try {
             const entrega = await this.entregaService.getById(req.params.id);

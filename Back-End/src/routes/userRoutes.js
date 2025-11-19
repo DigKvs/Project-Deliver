@@ -9,21 +9,19 @@ const controller = new UserController();
  * @swagger
  * components:
  *   schemas:
- *     # --- Schemas de User ---
  *     User:
  *       type: object
  *       properties:
  *         id:
  *           type: string
- *           description: O ID do usuário (gerado pelo Mongoose)
  *         nome:
  *           type: string
  *         email:
  *           type: string
- *         criadoEm:
+ *         createdAt:
  *           type: string
  *           format: date-time
- *         atualizadoEm:
+ *         updatedAt:
  *           type: string
  *           format: date-time
  *
@@ -59,104 +57,8 @@ const controller = new UserController();
  *       properties:
  *         nome:
  *           type: string
- *           example: "Meu Nome Atualizado"
  *         email:
  *           type: string
- *           example: "novoemail@exemplo.com"
- *
- *     # --- Schemas de Produto ---
- *     Produto:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *           example: "67f5b6e9a1b2c3d4e5f6a7b8"
- *         nome:
- *           type: string
- *           example: "Quadrado"
- *         criadoEm:
- *           type: string
- *           format: date-time
- *         atualizadoEm:
- *           type: string
- *           format: date-time
- *
- *     ProdutoInput:
- *       type: object
- *       required: [nome]
- *       properties:
- *         nome:
- *           type: string
- *           example: "Hexagono"
- *
- *     # --- Schemas de Entrega ---
- *     ProdutoEmEntrega:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         nome:
- *           type: string
- *         ordem:
- *           type: number
- *
- *     Entrega:
- *       type: object
- *       properties:
- *         id:
- *           type: string
- *         descricao:
- *           type: string
- *         status:
- *           type: string
- *           enum: [Pendente, Em Rota, Entregue, Cancelada]
- *         produtos:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/ProdutoEmEntrega'
- *         criadoEm:
- *           type: string
- *           format: date-time
- *         atualizadoEm:
- *           type: string
- *           format: date-time
- *
- *     ProdutoInputEntrega:
- *       type: object
- *       required: [produto, ordem]
- *       properties:
- *         produto:
- *           type: string
- *           description: O ID ou o Nome (único) do produto
- *           example: "Quadrado"
- *         ordem:
- *           type: number
- *           example: 1
- *
- *     EntregaCreateInput:
- *       type: object
- *       required: [descricao, produtos]
- *       properties:
- *         descricao:
- *           type: string
- *           example: "Entrega do Cliente X"
- *         produtos:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/ProdutoInputEntrega'
- *
- *     EntregaUpdateInput:
- *       type: object
- *       properties:
- *         descricao:
- *           type: string
- *         status:
- *           type: string
- *           enum: [Entregue, Cancelada]
- *         produtos:
- *           type: array
- *           items:
- *             $ref: '#/components/schemas/ProdutoInputEntrega'
  *
  *   securitySchemes:
  *     bearerAuth:
@@ -170,17 +72,12 @@ const controller = new UserController();
  * tags:
  *   - name: Usuários e Autenticação
  *     description: Endpoints para registro, login e gerenciamento de usuários
- *   - name: Produtos
- *     description: Endpoints para gerenciar produtos (Requer Autenticação)
- *   - name: Entregas
- *     description: Endpoints para gerenciar entregas e fila (Requer Autenticação)
  */
 
-// --- ROTAS DE USUÁRIO ---
-
+// LOGIN
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     summary: Realiza o login do usuário
  *     tags: [Usuários e Autenticação]
@@ -196,8 +93,9 @@ const controller = new UserController();
  *       '401':
  *         description: Email ou senha inválidos
  */
-router.post('/login', controller.login);
+router.post('/auth/login', controller.login);
 
+// REGISTRO
 /**
  * @swagger
  * /users:
@@ -218,9 +116,9 @@ router.post('/login', controller.login);
  */
 router.post('/users', controller.registerUser);
 
-// Middleware para proteger as rotas seguintes
 // router.use(authMiddleware);
 
+// LISTAR TODOS
 /**
  * @swagger
  * /users:
@@ -233,10 +131,11 @@ router.post('/users', controller.registerUser);
  *       '200':
  *         description: Lista de usuários
  *       '401':
- *         description: Token inválido ou não fornecido
+ *         description: Token inválido
  */
 router.get('/users', controller.getAllUser);
 
+// BUSCAR
 /**
  * @swagger
  * /users/{id}:
@@ -248,17 +147,16 @@ router.get('/users', controller.getAllUser);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
  *     responses:
- *       '200':
- *         description: Detalhes do usuário
- *       '404':
+ *       200:
+ *         description: Usuário encontrado
+ *       404:
  *         description: Usuário não encontrado
  */
 router.get('/users/:id', controller.getUserById);
 
+// ATUALIZAR
 /**
  * @swagger
  * /users/{id}:
@@ -270,8 +168,6 @@ router.get('/users/:id', controller.getUserById);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
  *     requestBody:
  *       required: true
@@ -280,13 +176,14 @@ router.get('/users/:id', controller.getUserById);
  *           schema:
  *             $ref: '#/components/schemas/UserUpdate'
  *     responses:
- *       '200':
+ *       200:
  *         description: Usuário atualizado
- *       '404':
+ *       404:
  *         description: Usuário não encontrado
  */
 router.put('/users/:id', controller.updateUser);
 
+// DELETAR
 /**
  * @swagger
  * /users/{id}:
@@ -298,13 +195,11 @@ router.put('/users/:id', controller.updateUser);
  *     parameters:
  *       - in: path
  *         name: id
- *         schema:
- *           type: string
  *         required: true
  *     responses:
- *       '200':
+ *       200:
  *         description: Usuário deletado
- *       '404':
+ *       404:
  *         description: Usuário não encontrado
  */
 router.delete('/users/:id', controller.deletedUser);
