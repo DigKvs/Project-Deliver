@@ -494,6 +494,7 @@ mainAboutUs p {
 
 .person {
     height: 175px;
+    border-radius: 50%;
 }
 
 .icons {
@@ -532,7 +533,6 @@ main_home {
     padding: 50px;
     align-items: center;
     justify-content: center;
-
 }
 
 .topHome {
@@ -617,6 +617,79 @@ main_home {
     align-items: end;
     justify-content: start;
     border-bottom: var(--cinza-border) 0.5px solid;
+}
+
+main_home2 {
+    height:100%;
+    background-color: var(--background-color);
+    display: flex;
+    padding: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolsText {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 1fr;
+    padding: 40px;
+    align-items: center;
+}
+
+.toolsText h3 {
+    font-size: 250%;
+    margin: 10px 0px 20px 0px;
+}
+
+.toolsText p {
+    color: var(--cinza-texto);
+}
+
+.tools {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) ;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.ferramenta {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ferramenta p {
+    font-size: 120%;
+    margin-top: 25px;
+}
+
+.toolTop {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.toolLogo {
+    height: 75px;
+    width: 75px;
+    border: #5f061d solid 3px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolLogo img{
+    height: 40px;
+}
+
+.toolTop h4{
+    font-size: 200%;
+    margin-left: 10px;
 }
 
 .border-right {
@@ -902,3 +975,21 @@ main_home {
     color: #ffffff;
     background-color: #385d77
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--background-color) ;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
