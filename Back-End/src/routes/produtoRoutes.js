@@ -5,7 +5,7 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 const controller = new ProdutoController();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 /**
  * @swagger

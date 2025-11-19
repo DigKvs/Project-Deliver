@@ -17,12 +17,23 @@ export class EntregaController {
     }
 // ... outros métodos ...
 
-    getEmRota = async (req, res) => {
+    getSomenteEntrega = async (req, res) => {
         try {
-            const listEntregas = await this.entregaService.getEmRota();
-            res.status(200).json(listEntregas.map(e => new EntregaDTO(e)));
+            // Chama o service que consulta o repositório com o filtro adequado.
+            const lista = await this.entregaService.getSomenteEntrega();
+
+            // Transforma o retorno da camada de dados em DTOs antes de enviar ao cliente
+            const respostaDTO = lista.map(e => new EntregaDTO(e));
+
+            // Retorna 200 OK com o array de entregas filtradas
+            res.status(200).json(respostaDTO);
+
         } catch (error) {
-            res.status(500).send(error.message);
+            // Tratamento de erro padronizado
+            res.status(500).json({
+                erro: "Erro ao buscar entregas com status 'Entrega'.",
+                detalhes: error.message
+            });
         }
     }
 

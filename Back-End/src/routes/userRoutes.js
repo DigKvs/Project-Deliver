@@ -116,7 +116,7 @@ router.post('/auth/login', controller.login);
  */
 router.post('/users', controller.registerUser);
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
 // LISTAR TODOS
 /**

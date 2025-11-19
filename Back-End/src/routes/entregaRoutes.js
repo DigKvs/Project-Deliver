@@ -5,8 +5,32 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 const controller = new EntregaController();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
+/**
+ * @swagger
+ * /entregas/em-rota:
+ *   get:
+ *     summary: Retorna a entrega que está atualmente "Em Rota"
+ *     description: |
+ *       Essa rota retorna **apenas a entrega que possui o status "Em Rota"**.
+ *       Caso não exista nenhuma entrega nesse status, retorna 404.
+ *     tags: [Entregas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Entrega com status "Em Rota" encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Entrega'
+ *       '404':
+ *         description: Nenhuma entrega "Em Rota" encontrada
+ *       '401':
+ *         description: Token inválido ou ausente
+ */
+router.get('/entregas/em-rota', controller.getSomenteEntrega);
 /**
  * @swagger
  * tags:
@@ -163,28 +187,5 @@ router.put('/entregas/:id', controller.update);
  */
 router.delete('/entregas/:id', controller.delete);
 
-/**
- * @swagger
- * /entregas/em-rota:
- *   get:
- *     summary: Retorna a entrega que está atualmente "Em Rota"
- *     description: |
- *       Essa rota retorna **apenas a entrega que possui o status "Em Rota"**.
- *       Caso não exista nenhuma entrega nesse status, retorna 404.
- *     tags: [Entregas]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: Entrega com status "Em Rota" encontrada
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Entrega'
- *       '404':
- *         description: Nenhuma entrega "Em Rota" encontrada
- *       '401':
- *         description: Token inválido ou ausente
- */
-router.get('/entregas/em-rota', controller.getEmRota);
+
 export default router;

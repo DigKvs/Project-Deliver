@@ -1,12 +1,7 @@
-
 import app from "./src/app.js";
-import dotenv from 'dotenv';
 
+const PORT = process.env.PORT || 3000;
 
-
-const PORT = 3000;
-dotenv.config();
 app.listen(PORT, () => {
-    console.log("Servidor na escuta!");
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
- 
