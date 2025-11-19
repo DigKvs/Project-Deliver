@@ -1,3 +1,6 @@
+// ===============================
+// 🔐 LOGIN AUTOMÁTICO
+// ===============================
 
 // Aqui você coloca o email e a senha reais que existem no banco
 const LOGIN_EMAIL = "email@exemplo.com";
@@ -20,21 +23,16 @@ async function loginAutomatico() {
             })
         });
 
-        // Se o status não for 200, algo deu errado
         if (!response.ok) {
             throw new Error(`Falha no login. Status: ${response.status}`);
         }
 
-        // Backend devolve o token aqui
         const data = await response.json();
 
-        // Exibe token no console para debug
         console.log("Token JWT recebido com sucesso:");
         console.log(data.token);
 
-        // Salva o token no localStorage para todas as outras requisições
         localStorage.setItem("token", data.token);
-
         console.log("Token salvo no localStorage.");
 
         return true;
@@ -44,6 +42,10 @@ async function loginAutomatico() {
         return false;
     }
 }
+
+// ===============================
+// 🎛 CAPTURA DOS SELECTS
+// ===============================
 
 const selectPeca1 = document.getElementById("peca1");
 const selectPeca2 = document.getElementById("peca2");
@@ -58,14 +60,30 @@ function validar(nomeCampo, valor) {
     return true;
 }
 
+// ===============================
+// 🔢 FUNÇÃO PARA DEFINIR A ORDEM PELA PEÇA
+// ===============================
+
+function definirOrdem(peca) {
+    const mapaOrdem = {
+        "Quadrado": 1,
+        "Circulo": 2,
+        "Hexagono": 3
+    };
+
+    return mapaOrdem[peca] || 999;
+}
+
+// ===============================
+// 📦 ENVIO DA ENTREGA (POST /entregas)
+// ===============================
+
 async function enviarEntrega() {
 
-    // Pega os valores dos selects
     const p1 = selectPeca1.value;
     const p2 = selectPeca2.value;
     const p3 = selectPeca3.value;
 
-    // Valida todos
     const ok1 = validar("Peça 1", p1);
     const ok2 = validar("Peça 2", p2);
     const ok3 = validar("Peça 3", p3);
@@ -75,20 +93,21 @@ async function enviarEntrega() {
         return;
     }
 
-    // Monta o JSON final
-    const jsonFinal = {
-        descricao: "Minha Primeira Entrega Segura",
-        produtos: [
-            { produto: p1, ordem: 1 },
-            { produto: p2, ordem: 2 },
-            { produto: p3, ordem: 3 }
-        ]
-    };
+    // Monta a lista de produtos já com a ordem automática
+const produtosOrdenados = [
+    { produto: p1, ordem: definirOrdem(p1) },
+    { produto: p2, ordem: definirOrdem(p2) },
+    { produto: p3, ordem: definirOrdem(p3) }
+];
 
-    console.log("JSON preparado:");
+const jsonFinal = {
+    descricao: "...",
+    produtos: produtosOrdenados
+};
+
+    console.log("JSON final com ordenação automática:");
     console.log(jsonFinal);
 
-    // Pega o token salvo pelo login automático
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -96,15 +115,14 @@ async function enviarEntrega() {
         return;
     }
 
-    console.log("Token encontrado para envio da entrega:", token);
+    console.log("Token encontrado:", token);
 
-    // Faz o POST para /entregas
     try {
         const response = await fetch("http://localhost:3000/entregas", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`  // TOKEN AQUI
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(jsonFinal)
         });
@@ -115,8 +133,7 @@ async function enviarEntrega() {
 
         const resultado = await response.json();
 
-        console.log("Resposta do servidor:");
-        console.log(resultado);
+        console.log("Resposta do servidor:", resultado);
 
         alert("✅ Entrega cadastrada com sucesso!");
 
@@ -127,6 +144,7 @@ async function enviarEntrega() {
 }
 
 botaoPedido.addEventListener("click", enviarEntrega);
+
 
 window.addEventListener("load", async () => {
     console.log("Página carregada. Realizando login automático...");
