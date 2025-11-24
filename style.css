@@ -20,6 +20,10 @@
     font-weight: 500;
 }
 
+p {
+    font-size: 80%;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     font-size: 16px;
@@ -50,6 +54,34 @@ mainLogin {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.borda-cinza-6px {
+    border: solid 6px #262626;
+}
+
+.borda-cinza-2px {
+    border: solid 2px #262626;
+}
+
+.borda-cinza-1px {
+    border: solid 1px #262626;
+}
+
+.borda-cinza-1px-top {
+    border-top: solid 1px #262626;
+}
+
+.borda-cinza-1px-right {
+    border-right: solid 1px #262626;
+}
+
+.borda-cinza-1px-bottom {
+    border-bottom: solid 1px #262626;
+}
+
+.borda-cinza-1px-left {
+    border-left: solid 1px #262626;
 }
 
 .loginArea {
@@ -423,6 +455,107 @@ mainPedidos {
     justify-content: center;
 }
 
+mainAboutUs {
+    height:90%;
+    background-color: var(--background-color);
+    display: grid;
+    grid-template-rows: 35% 65% ;
+    grid-template-columns: 1fr;
+    padding: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.aboutUsTop {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ourTeam {
+    display: flex;
+    padding: 6px;
+    background-color: var(--background-light-color);
+    width: 9%;
+    margin: 0px 30px;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.ourTeam img {
+    height: 100%;
+    margin-right: 0px;
+}
+
+.aboutUsTop h2 {
+    font-size: 200%;
+    margin: 20px 30px;
+}
+
+.aboutUsTop p {
+    margin: 0px 30px;
+}
+
+.ourTeam p {
+    margin: 0px 10px;
+}
+
+mainAboutUs p {
+    color: var(--cinza-texto);
+}
+
+.teams {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+}
+
+.cardTeam {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 10%;
+    height: 80%;
+}
+
+.person {
+    height: 175px;
+    border-radius: 50%;
+}
+
+.icons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.cardTeam h5 {
+    font-size: 130%;
+    margin: 10px 0px;
+}
+
+.cardTeam h6 {
+    font-size: 100%;
+    margin-bottom: 15px;
+}
+
+.cardTeam p {
+    text-align: center;
+    font-size: 80%;
+    margin-bottom: 10px;
+}
+
+.logoIcons img{
+    height: 30px;
+}
+
 main_home {
     height:90%;
     background-color: var(--background-color);
@@ -432,7 +565,6 @@ main_home {
     padding: 50px;
     align-items: center;
     justify-content: center;
-
 }
 
 .topHome {
@@ -464,7 +596,6 @@ main_home {
 }
 
 .principal1 p {
-    font-size: 75%;
     color: var(--cinza-texto);
 }
 
@@ -498,7 +629,7 @@ main_home {
 }
 
 .subprincipal p {
-    font-size: 75%;
+    font-size: 80%;
     color: var(--cinza-texto);
 }
 
@@ -517,6 +648,98 @@ main_home {
     align-items: end;
     justify-content: start;
     border-bottom: var(--cinza-border) 0.5px solid;
+}
+
+main_home2 {
+    height:100%;
+    background-color: var(--background-color);
+    display: flex;
+    padding: 50px;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolsText {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: 1fr;
+    padding: 40px;
+    align-items: center;
+}
+
+.toolsText h3 {
+    font-size: 250%;
+    margin: 10px 0px 20px 0px;
+}
+
+.toolsText p {
+    color: var(--cinza-texto);
+}
+
+.toolsTextSeparator {
+    width: 70%;
+}
+
+.tools {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    padding: 45px;
+    margin: 20px;
+    grid-template-columns: repeat(2, 1fr) ;
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 40px;
+    box-shadow: 
+        /* 1. Uma sombra interna (opcional) para dar um brilho sutil na borda de cima */
+        /* inset 0 1px 0 rgba(255, 255, 255, 0.05), */ 
+        
+        /* 2. Sombra principal - um brilho suave e levemente espalhado */
+        0 4px 6px rgba(0, 0, 0, 0.4),
+        
+        /* 3. Uma sombra maior e mais escura, mas com pouca opacidade, para a sensação de elevação */
+        0 10px 15px rgba(0, 0, 0, 0.2),
+        
+        /* 4. Sombra "clara" ou "Glow" sutil - O mais importante no Dark Mode */
+        0 0 15px rgba(255, 255, 255, 0.03); /* Brilho branco muito sutil */
+}
+
+.ferramenta {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.ferramenta p {
+    font-size: 80%;
+    margin-top: 25px;
+}
+
+.toolTop {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.toolLogo {
+    height: 60px;
+    width: 60px;
+    border: #5f061d solid 3px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolLogo img{
+    height: 30px;
+}
+
+.toolTop h4{
+    font-size: 130%;
+    margin-left: 10px;
 }
 
 .border-right {
@@ -566,8 +789,105 @@ main_home {
 }
 
 .subprincipal2 p {
-    font-size: 75%;
+    font-size: 80%;
     color: var(--cinza-texto);
+}
+
+main_historic {
+    height: 90%;
+    background-color: var(--background-color);
+    display: grid;
+    grid-template-columns:  60% 40%;
+    grid-template-rows: ;
+    justify-content: center;
+}
+
+.line {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30% 70%;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.txtLine {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    padding: 100px;
+}
+
+.txtLine h3 {
+    margin-bottom: 30px;
+}
+
+.txtLine p {
+    font-size: 90%;
+    color: var(--cinza-texto);
+}
+
+.lineTable {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.requestTable {
+    /* Fundo do cartão (um pouco mais claro que o body) */
+    background-color: #1e1e1e; 
+    
+    /* Forma e espaçamento */
+    padding: 30px;
+    margin: 40px auto; /* Centraliza na página */
+    width: 90%; 
+    max-width: 1000px;
+    border-radius: 12px;
+    
+    /* A Sombra Sutil e Profunda */
+    box-shadow: 
+        /* Sombra escura (principal sensação de profundidade/elevação) */
+        0 10px 20px rgba(0, 0, 0, 0.5), 
+        
+        /* Brilho branco sutil (efeito de "dark mode glow") */
+        0 0 15px rgba(255, 255, 255, 0.04); 
+}
+
+.requestTable h2 {
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.requestTable table {
+    width: 100%;
+    border-collapse: collapse; /* Remove espaçamento entre células */
+}
+
+/* Estilo do cabeçalho da tabela */
+.requestTable thead th {
+    color: #aaaaaa;
+    font-weight: 500;
+    text-align: left;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Estilo das células do corpo da tabela */
+.requestTable tbody td {
+    color: #f0f0f0;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Efeito de hover nas linhas (para destacar a interação) */
+.requestTable tbody tr:hover {
+    background-color: #282828; /* Um cinza um pouco mais escuro ao passar o mouse */
 }
 
 .margin-top10px {
@@ -802,3 +1122,21 @@ main_home {
     color: #ffffff;
     background-color: #385d77
 }
+
+
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--background-color) ;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
