@@ -423,107 +423,6 @@ mainPedidos {
     justify-content: center;
 }
 
-mainAboutUs {
-    height:90%;
-    background-color: var(--background-color);
-    display: grid;
-    grid-template-rows: 35% 65% ;
-    grid-template-columns: 1fr;
-    padding: 50px;
-    align-items: center;
-    justify-content: center;
-}
-
-.aboutUsTop {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.ourTeam {
-    display: flex;
-    padding: 6px;
-    background-color: var(--background-light-color);
-    width: 9%;
-    margin: 0px 30px;
-    border-radius: 10px;
-    justify-content: center;
-    align-items: center;
-}
-
-.ourTeam img {
-    height: 100%;
-    margin-right: 0px;
-}
-
-.aboutUsTop h2 {
-    font-size: 200%;
-    margin: 20px 30px;
-}
-
-.aboutUsTop p {
-    margin: 0px 30px;
-}
-
-.ourTeam p {
-    margin: 0px 10px;
-}
-
-mainAboutUs p {
-    color: var(--cinza-texto);
-}
-
-.teams {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-}
-
-.cardTeam {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    width: 10%;
-    height: 80%;
-}
-
-.person {
-    height: 175px;
-    border-radius: 50%;
-}
-
-.icons {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.cardTeam h5 {
-    font-size: 130%;
-    margin: 10px 0px;
-}
-
-.cardTeam h6 {
-    font-size: 100%;
-    margin-bottom: 15px;
-}
-
-.cardTeam p {
-    text-align: center;
-    font-size: 80%;
-    margin-bottom: 10px;
-}
-
-.logoIcons img{
-    height: 30px;
-}
-
 main_home {
     height:90%;
     background-color: var(--background-color);
@@ -533,6 +432,7 @@ main_home {
     padding: 50px;
     align-items: center;
     justify-content: center;
+
 }
 
 .topHome {
@@ -617,79 +517,6 @@ main_home {
     align-items: end;
     justify-content: start;
     border-bottom: var(--cinza-border) 0.5px solid;
-}
-
-main_home2 {
-    height:100%;
-    background-color: var(--background-color);
-    display: flex;
-    padding: 50px;
-    align-items: center;
-    justify-content: center;
-}
-
-.toolsText {
-    display: grid;
-    height: 100%;
-    width: 100%;
-    grid-template-columns: 40% 60%;
-    grid-template-rows: 1fr;
-    padding: 40px;
-    align-items: center;
-}
-
-.toolsText h3 {
-    font-size: 250%;
-    margin: 10px 0px 20px 0px;
-}
-
-.toolsText p {
-    color: var(--cinza-texto);
-}
-
-.tools {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr) ;
-    grid-template-rows: repeat(3, 1fr);
-}
-
-.ferramenta {
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.ferramenta p {
-    font-size: 120%;
-    margin-top: 25px;
-}
-
-.toolTop {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-}
-
-.toolLogo {
-    height: 75px;
-    width: 75px;
-    border: #5f061d solid 3px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.toolLogo img{
-    height: 40px;
-}
-
-.toolTop h4{
-    font-size: 200%;
-    margin-left: 10px;
 }
 
 .border-right {
@@ -975,21 +802,3 @@ main_home2 {
     color: #ffffff;
     background-color: #385d77
 }
-
-
-::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: var(--background-color) ;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 5px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
