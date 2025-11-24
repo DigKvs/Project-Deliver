@@ -66,8 +66,8 @@ function validar(nomeCampo, valor) {
 
 function definirOrdem(peca) {
     const mapaOrdem = {
-        "Quadrado": 1,
-        "Circulo": 2,
+        "Quadrado": 2,
+        "Circulo": 1,
         "Hexagono": 3
     };
 
@@ -88,12 +88,16 @@ async function enviarEntrega() {
     const ok2 = validar("Peça 2", p2);
     const ok3 = validar("Peça 3", p3);
 
+    if (p1 == p2 || p2 == p3 || p1 == p3){
+        alert("Todas as peças precisam ser diferentes!");
+        return;
+    }
+
     if (!ok1 || !ok2 || !ok3) {
         alert("🚫 Selecione as 3 peças antes de enviar a entrega!");
         return;
     }
 
-    // Monta a lista de produtos já com a ordem automática
 const produtosOrdenados = [
     { produto: p1, ordem: definirOrdem(p1) },
     { produto: p2, ordem: definirOrdem(p2) },
