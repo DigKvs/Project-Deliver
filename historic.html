@@ -27,9 +27,77 @@
             <img class="user" src="./public/user.png" alt="usuario">
         </div>
     </header>
-    <main_home>
-
-    </main_home>
+    <main_historic>
+        <div class="requestTable">
+            <h2>Histórico de Pedidos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID PEDIDO</th>
+                        <th>STATUS</th>
+                        <th>ITEM</th>
+                        <th>NOME DO CLIENTE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><span class="status rascunho">Rascunho</span></td>
+                        <td><span class="item square"></span><span class="item star"></span><span class="item circle"></span></td>
+                        <td>Nycolas Prado</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><span class="status em-fila">Em Fila</span></td>
+                        <td><span class="item square"></span><span class="item star"></span> | <span class="item square"></span><span class="item circle"></span></td>
+                        <td>Guilherme Alquieri</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><span class="status enviado">Enviado</span></td>
+                        <td><span class="item square"></span><span class="item circle"></span></td>
+                        <td>Linda Wilson</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="line">
+            <div class="txtLine">
+                <h3>Fila de Execução</h3>
+                <p class="cinza">Para garantir que suas necessidades mais urgentes sejam atendidas rapidamente, informamos que os pedidos classificados como Prioridade e Padrão serão colocados no topo da fila de execução.</p>
+            </div>
+            <div class="lineTable">
+                <div class="requestTable">
+                    <table>
+                    <thead>
+                        <tr>
+                            <th>ID PEDIDO</th>
+                            <th>ITEM</th>
+                            <th>NOME DO CLIENTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><span class="item square"></span><span class="item star"></span><span class="item circle"></span></td>
+                            <td>Nycolas Prado</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><span class="item square"></span><span class="item star"></span> | <span class="item square"></span><span class="item circle"></span></td>
+                            <td>Guilherme Alquieri</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><span class="item square"></span><span class="item circle"></span></td>
+                            <td>Linda Wilson</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main_historic>
     <script src="script.js"></script>
 </body>
 </html>
