@@ -327,10 +327,6 @@ header {
     z-index: 10;
 }
 
-.icon {
-
-}
-
 .links {
     display: flex;
     justify-content: center;
@@ -798,7 +794,6 @@ main_historic {
     background-color: var(--background-color);
     display: grid;
     grid-template-columns:  60% 40%;
-    grid-template-rows: ;
     justify-content: center;
 }
 
@@ -1108,14 +1103,14 @@ main_historic {
 .buttonPedido {
     padding: 10px 130px;
     margin: 15px;
-    background-color: #7e212b;
+    background-color: var(--primary-color);
     border:#ffffff solid 1px;
     color: #ffffff;
     cursor: pointer;
 }
 
 .buttonPedido:hover {
-    
+    background-color: #8a0c30;
 }
 
 .select-wrapper select option {
@@ -1123,6 +1118,14 @@ main_historic {
     background-color: #385d77
 }
 
+.pinHolder {
+    width: 100%;       /* Ou um tamanho fixo, ex: 400px */
+    height: 400px;     /* Altura é OBRIGATÓRIA */
+    position: relative;
+    background: #f0f0f0; /* Cor de fundo provisória para ver a área */
+    overflow: hidden;
+    border-radius: 10px;
+}
 
 ::-webkit-scrollbar {
     width: 8px;
