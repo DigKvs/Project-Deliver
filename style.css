@@ -1140,3 +1140,38 @@ main_historic {
   ::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
+
+.user-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.user-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltip-text {
+    /* visibility: hidden; */
+    width: auto;
+    min-width: 120px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+
+    /* Posicionamento */
+    position: absolute;
+    top: 75%; /* Fica logo abaixo do ícone */
+    left: 95%;
+    transform: translateX(-50%); /* Centraliza */
+    white-space: nowrap; /* Evita quebra de linha no email */
+    z-index: 30;
+    
+    /* Efeitinho de transição */
+
+    transition: opacity 0.3s;
+}
