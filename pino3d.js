@@ -40,7 +40,7 @@ const RAIO_HASTE = 0.75;
 const RAIO_FURO = 0.85; 
 const GAP = 0.08; 
 
-const materialLinhaPreta = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+const materialLinhaPreta = new THREE.LineBasicMaterial({ color: 0x736C7B, linewidth: 2 });
 
 const selPeca1 = document.getElementById('peca1');
 const selPeca2 = document.getElementById('peca2');
@@ -69,15 +69,15 @@ function criarEstruturaPino() {
     const materialPino = new THREE.MeshStandardMaterial({ color: 0x736C7B, metalness: 1, roughness: 0.4 });
 
 
-    const light = new THREE.DirectionalLight(0xffffff, 20);
-    light.position.set(5, 10, 5);
+    const light = new THREE.DirectionalLight(0xffffff, 30);
+    light.position.set(20, 40, 50);
     scene.add(light);
 
     const ambient = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambient);
 
     // Base
-    const geoBase = new THREE.CylinderGeometry(2.8, 2.8, ALTURA_BASE, 64);
+    const geoBase = new THREE.CylinderGeometry(2.8, 2.8, ALTURA_BASE, 1000);
     const meshBase = new THREE.Mesh(geoBase, materialPino);
     meshBase.position.y = ALTURA_BASE / 2;
     meshBase.receiveShadow = true;
@@ -94,7 +94,7 @@ function criarEstruturaPino() {
     grupoPai.add(meshHaste);
 
     // Topo
-    const geoTopo = new THREE.CylinderGeometry(RAIO_HASTE * 0.7, RAIO_HASTE, 0.3, 64);
+    const geoTopo = new THREE.CylinderGeometry(RAIO_HASTE * 0.7, RAIO_HASTE, 0.3, 1000);
     const meshTopo = new THREE.Mesh(geoTopo, materialPino);
     meshTopo.position.y = alturaHaste + 0.15;
     meshTopo.add(new THREE.LineSegments(new THREE.EdgesGeometry(geoTopo), materialLinhaPreta));
@@ -153,11 +153,11 @@ function criarPecaProcedural(tipo) {
 
     switch (tipo) {
         case 'Circulo':
-            corPeca = 0xff7f50; 
+            corPeca = 0x10D5DC; 
             shape.absarc(0, 0, 2.2, 0, Math.PI * 2, false);
             break;
         case 'Quadrado':
-            corPeca = 0x9b59b6; 
+            corPeca = 0xB509FF; 
             const tam = 2.1; 
             shape.moveTo(-tam, -tam);
             shape.lineTo(tam, -tam);
@@ -166,7 +166,7 @@ function criarPecaProcedural(tipo) {
             shape.lineTo(-tam, -tam);
             break;
         case 'Hexagono':
-            corPeca = 0xf1c40f; 
+            corPeca = 0x00FF4D; 
             const radius = 2.4;
             for (let i = 0; i < 6; i++) {
                 const angle = (i * 60) * (Math.PI / 180);
@@ -187,13 +187,13 @@ function criarPecaProcedural(tipo) {
     const extrudeSettings = {
         depth: ALTURA_PECA,
         bevelEnabled: false,
-        curveSegments: 32
+        curveSegments: 1000
     };
 
     const geometria = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     geometria.center(); 
 
-    const mat = new THREE.MeshStandardMaterial({ color: corPeca, metalness: 0.5, roughness: 0.5 });
+    const mat = new THREE.MeshStandardMaterial({ color: corPeca, metalness: 1, roughness: 0.4 });
     const mesh = new THREE.Mesh(geometria, mat);
     
     mesh.rotation.x = Math.PI / 2;
