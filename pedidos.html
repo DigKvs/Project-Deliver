@@ -36,7 +36,7 @@
                     </label>
                 </div>
                 <div class="pinChoice center">
-                    <h3>Pino 1</h3>
+                    <h3 id="tituloPino">Pino 1</h3>
                     
                     <div class="select-wrapper">
                         <label for="peca1">Peça 1:</label>
@@ -50,7 +50,7 @@
 
                     <div class="select-wrapper">
                         <label for="peca2">Peça 2:</label>
-                        <select id="peca2" name="peca2_selected">
+                        <select id="peca2" name="peca2_selected" disabled>
                             <option value="" disabled selected>-- Selecione uma opção --</option>
                             <option value="Circulo">Circulo</option>
                             <option value="Quadrado">Quadrado</option>
@@ -60,13 +60,17 @@
 
                     <div class="select-wrapper">
                         <label for="peca3">Peça 3:</label>
-                        <select id="peca3" name="peca3_selected">
+                        <select id="peca3" name="peca3_selected" disabled>
                             <option value="" disabled selected>-- Selecione uma opção --</option>
                             <option value="Circulo">Circulo</option>
                             <option value="Quadrado">Quadrado</option>
                             <option value="Hexagono">Hexagono</option>
                         </select>
                     </div>
+                    <button id="btnLimpar" style="margin-top: 10px; background-color: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">
+                    Limpar
+
+                    </button>
                 </div>
                 <span></span>
                 <div class="confirmPedido">
@@ -79,7 +83,7 @@
         </div>
     </mainPedidos>
     <script src="script.js"></script>
-    <script src="Scripts/Entregas.js"></script>
+    <script type="module" src="./Scripts/Entregas.js"></script>
     <script src="Scripts/email.js"></script>
     <script type="importmap">
         {
@@ -89,6 +93,6 @@
             }
         }
     </script>
-
+    <script type="module" src="pino3d.js"></script>
 </body>
 </html>

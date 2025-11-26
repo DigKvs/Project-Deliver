@@ -1,126 +1,113 @@
 // ===============================
-// 🔐 LOGIN AUTOMÁTICO
+// IMPORTAÇÃO CORRETA
 // ===============================
+import { pedidoFinal } from "../pino3d.js";
 
-// Aqui você coloca o email e a senha reais que existem no banco
-const LOGIN_EMAIL = "email@exemplo.com";
-const LOGIN_PASSWORD = "senha123";
-
-// Esta função realiza o login no servidor e salva o token automaticamente
-async function loginAutomatico() {
-    console.log("Iniciando login automático...");
-
-    try {
-        // Faz a requisição POST para o backend
-        const response = await fetch("http://localhost:3000/auth/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email: LOGIN_EMAIL,
-                password: LOGIN_PASSWORD
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Falha no login. Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        console.log("Token JWT recebido com sucesso:");
-        console.log(data.token);
-
-        localStorage.setItem("token", data.token);
-        console.log("Token salvo no localStorage.");
-
-        return true;
-
-    } catch (error) {
-        console.error("Erro durante o login automático:", error);
-        return false;
-    }
-}
 
 // ===============================
-// 🎛 CAPTURA DOS SELECTS
+// 🔐 VERIFICAÇÃO DE AUTENTICAÇÃO
 // ===============================
-
-const selectPeca1 = document.getElementById("peca1");
-const selectPeca2 = document.getElementById("peca2");
-const selectPeca3 = document.getElementById("peca3");
-const botaoPedido = document.getElementById("buttonPedido");
-
-function validar(nomeCampo, valor) {
-    if (!valor || valor.trim() === "") {
-        console.warn(`⚠️ O campo ${nomeCampo} não foi selecionado.`);
-        return false;
-    }
-    return true;
-}
-
-// ===============================
-// 🔢 FUNÇÃO PARA DEFINIR A ORDEM PELA PEÇA
-// ===============================
-
-function definirOrdem(peca) {
-    const mapaOrdem = {
-        "Quadrado": 2,
-        "Circulo": 1,
-        "Hexagono": 3
-    };
-
-    return mapaOrdem[peca] || 999;
-}
-
-// ===============================
-// 📦 ENVIO DA ENTREGA (POST /entregas)
-// ===============================
-
-async function enviarEntrega() {
-
-    const p1 = selectPeca1.value;
-    const p2 = selectPeca2.value;
-    const p3 = selectPeca3.value;
-
-    const ok1 = validar("Peça 1", p1);
-    const ok2 = validar("Peça 2", p2);
-    const ok3 = validar("Peça 3", p3);
-
-    if (p1 == p2 || p2 == p3 || p1 == p3){
-        alert("Todas as peças precisam ser diferentes!");
-        return;
-    }
-
-    if (!ok1 || !ok2 || !ok3) {
-        alert("🚫 Selecione as 3 peças antes de enviar a entrega!");
-        return;
-    }
-
-const produtosOrdenados = [
-    { produto: p1, ordem: definirOrdem(p1) },
-    { produto: p2, ordem: definirOrdem(p2) },
-    { produto: p3, ordem: definirOrdem(p3) }
-];
-
-const jsonFinal = {
-    descricao: "...",
-    produtos: produtosOrdenados
-};
-
-    console.log("JSON final com ordenação automática:");
-    console.log(jsonFinal);
-
+window.addEventListener("load", () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-        alert("Erro: Nenhum token encontrado! Login automático falhou.");
+        alert("🚫 Acesso negado! Faça login primeiro.");
+        window.location.href = "index.html";
         return;
     }
 
-    console.log("Token encontrado:", token);
+    console.log("✅ Token carregado. Usuário autenticado.");
+});
 
+
+// ===============================
+// BOTÃO DO HTML
+// ===============================
+const botaoPedido = document.getElementById("buttonPedido");
+
+
+// ===============================
+// 🧪 VALIDAÇÃO DO PEDIDO
+// ===============================
+function validarPedido(pedido) {
+    const p1 = pedido.pino1;
+
+    if (!p1.slot1 && !p1.slot2 && !p1.slot3) {
+        return { ok: false, message: "O Pino 1 está vazio." };
+    }
+
+    return { ok: true };
+}
+
+
+// ===============================
+// 🔄 NOVA FUNÇÃO → Junta todos os pinos em UM JSON
+// ===============================
+function gerarProdutosUnificados(pedido) {
+    const listaProdutos = [];
+    const slots = ['slot1', 'slot2', 'slot3']; // Garante a ordem de leitura
+
+    // --- Função auxiliar interna para evitar repetição de código ---
+    const processarPino = (pinoData, adicionarNaOrdem) => {
+        if (!pinoData) return; // Se o pino não existir, ignora
+
+        slots.forEach((slotName, index) => {
+            const item = pinoData[slotName];
+
+            // Se existe item e não é vazio
+            if (item && item.trim() !== "") {
+                listaProdutos.push({
+                    produto: item,
+                    // Se for pino 1: index (0) + 1 + 0 = Ordem 1
+                    // Se for pino 2: index (0) + 1 + 3 = Ordem 4
+                    ordem: index + 1 + adicionarNaOrdem 
+                });
+            }
+        });
+    };
+
+    // 1. Processa Pino 1 (Começa na ordem 1)
+    processarPino(pedido.pino1, 0);
+
+    // 2. Processa Pino 2 (Começa na ordem 4), se existir
+    processarPino(pedido.pino2, 3);
+
+    return listaProdutos;
+}
+
+
+// ===============================
+// ✈️ FUNÇÃO DE ENVIO PARA API
+// ===============================
+async function enviarEntrega() {
+
+    // 1 — validação básica
+    const check = validarPedido(pedidoFinal);
+    if (!check.ok) {
+        alert("Erro: " + check.message);
+        return;
+    }
+
+    // 2 — gera o JSON unificado (como você pediu!)
+    const produtosFinal = gerarProdutosUnificados(pedidoFinal);
+
+    const jsonFinal = {
+        descricao: "Entrega do pino 3D",
+        produtos: produtosFinal
+    };
+
+    console.log("📦 JSON FINAL MONTADO:");
+    console.log(jsonFinal);
+
+    // 3 — pega token
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("Sessão encerrada. Faça login novamente.");
+        window.location.href = "index.html";
+        return;
+    }
+
+    // 4 — faz a requisição
     try {
         const response = await fetch("http://localhost:3000/entregas", {
             method: "POST",
@@ -131,26 +118,41 @@ const jsonFinal = {
             body: JSON.stringify(jsonFinal)
         });
 
+        if (response.status === 401 || response.status === 403) {
+            alert("Sua sessão expirou. Faça login novamente.");
+            localStorage.removeItem("token");
+            window.location.href = "index.html";
+            return;
+        }
+
         if (!response.ok) {
-            throw new Error(`Erro ao enviar entrega: ${response.status}`);
+            const erroData = await response.json().catch(() => ({
+                message: "Erro desconhecido no servidor."
+            }));
+            throw new Error(erroData.message);
         }
 
         const resultado = await response.json();
+        console.log("🎉 Sucesso:", resultado);
+        alert("Entrega cadastrada com sucesso!");
 
-        console.log("Resposta do servidor:", resultado);
-
-        alert("✅ Entrega cadastrada com sucesso!");
-
-    } catch (error) {
-        console.error("Erro ao enviar entrega:", error);
-        alert("🚫 Erro ao enviar entrega!");
+    } catch (err) {
+        console.error("❌ Erro ao enviar:", err);
+        alert("Erro ao enviar: " + err.message);
     }
 }
 
-botaoPedido.addEventListener("click", enviarEntrega);
 
+// ===============================
+// EVENTO DO BOTÃO
+// ===============================
+if (botaoPedido) {
+    botaoPedido.addEventListener("click", (e) => {
+        e.preventDefault();
+        enviarEntrega();
+    });
 
-window.addEventListener("load", async () => {
-    console.log("Página carregada. Realizando login automático...");
-    await loginAutomatico();
-});
+    console.log("🔘 Evento ligado ao botão 'buttonPedido'");
+} else {
+    console.error("❌ Botão 'buttonPedido' NÃO encontrado!");
+}

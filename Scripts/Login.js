@@ -49,12 +49,17 @@ document.querySelector(".loginConfirm").addEventListener("click", fazerLogin);
 
 async function registrarUsuario() {
     const nome = document.getElementById("Nome").value;
-    const email = document.getElementById("Email2").value;
-    const senha = document.getElementById("Senha2").value;
+    const email = document.getElementById("EmailRegister").value;
+    const senha = document.getElementById("SenhaRegister").value;
     const termos = document.getElementById("terms").checked;
 
     if (!nome || !email || !senha) {
         alert("Preencha todos os campos!");
+        return;
+    }
+
+    if (senha.lenght < 6){
+        alert("Precisa ter pelo menos 6 caracteres");
         return;
     }
 
