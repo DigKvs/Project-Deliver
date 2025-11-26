@@ -513,9 +513,11 @@ mainAboutUs p {
 }
 
 .cardTeam {
-    display: flex;
+    display: grid;
     align-items: center;
-    flex-direction: column;
+    justify-content: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: 45% 10% 10% 20% 10%;
     width: 10%;
     height: 80%;
 }
@@ -533,13 +535,15 @@ mainAboutUs p {
 }
 
 .cardTeam h5 {
-    font-size: 130%;
+    font-size: 120%;
     margin: 10px 0px;
+    text-align: center;
 }
 
 .cardTeam h6 {
     font-size: 100%;
     margin-bottom: 15px;
+    text-align: center;
 }
 
 .cardTeam p {

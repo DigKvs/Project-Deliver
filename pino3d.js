@@ -66,7 +66,15 @@ function criarEstruturaPino() {
     const grupoPai = new THREE.Group();
 
     // Material Pino
-    const materialPino = new THREE.MeshStandardMaterial({ color: 0x1abc9c, metalness: 0.6, roughness: 0.4 });
+    const materialPino = new THREE.MeshStandardMaterial({ color: 0x736C7B, metalness: 1, roughness: 0.4 });
+
+
+    const light = new THREE.DirectionalLight(0xffffff, 20);
+    light.position.set(5, 10, 5);
+    scene.add(light);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambient);
 
     // Base
     const geoBase = new THREE.CylinderGeometry(2.8, 2.8, ALTURA_BASE, 64);
@@ -198,36 +206,62 @@ function criarPecaProcedural(tipo) {
     return mesh;
 }
 
+// =======================================================
+// NOVA LÓGICA DE RENDERIZAÇÃO: TROCA DE PEÇAS (SWAP)
+// =======================================================
 function renderizarPeca3D(idPino, nomeSlot, tipoPeca) {
     const pinoAlvo = (idPino === 1) ? pino1 : pino2;
     const slotAlvo = pinoAlvo.getObjectByName(nomeSlot);
     if (!slotAlvo) return;
 
-    while (slotAlvo.children.length > 0) {
-        gsap.killTweensOf(slotAlvo.children[0].position);
-        if (slotAlvo.children[0].geometry) slotAlvo.children[0].geometry.dispose();
-        slotAlvo.remove(slotAlvo.children[0]);
+    // --- PASSO 1: REMOVER PEÇA ANTIGA (SE HOUVER) ---
+    if (slotAlvo.children.length > 0) {
+        const pecaAntiga = slotAlvo.children[0];
+        
+        // Mata animações antigas
+        gsap.killTweensOf(pecaAntiga.position);
+        gsap.killTweensOf(pecaAntiga.scale);
+
+        // ANIMAÇÃO DE SAÍDA (SOBE E SOME)
+        gsap.to(pecaAntiga.position, {
+            y: pecaAntiga.position.y + 15,
+            duration: 0.6,
+            ease: "power2.in"
+        });
+        
+        gsap.to(pecaAntiga.scale, {
+            x: 0, y: 0, z: 0,
+            duration: 0.6,
+            ease: "power2.in",
+            onComplete: () => {
+                if (pecaAntiga.geometry) pecaAntiga.geometry.dispose();
+                slotAlvo.remove(pecaAntiga);
+            }
+        });
     }
 
+    // --- PASSO 2: COLOCAR NOVA PEÇA (SE HOUVER) ---
     if (tipoPeca && tipoPeca !== "") {
         const novaPeca = criarPecaProcedural(tipoPeca);
         const yFinal = novaPeca.position.y;
         
-        novaPeca.position.y = yFinal + 6; 
+        // Começa lá no alto
+        novaPeca.position.y = yFinal + 12; 
         
         slotAlvo.add(novaPeca);
 
+        // Atrasamos a entrada (delay) para dar tempo da antiga sair
         gsap.to(novaPeca.position, {
             y: yFinal, 
             duration: 2.2, 
-            ease: "back.out(0.15)", 
-            delay: 0.05
+            ease: "back.out(0.15)", // Impacto seco
+            delay: 0.5 // <--- O SEGREDO: Espera 0.5s a velha subir
         });
     }
 }
 
 // ==========================================
-// 5. GESTÃO DE ESTADO E INTERFACE
+// 5. GESTÃO DE ESTADO E INTERFACE (PERMITINDO TROCAS)
 // ==========================================
 
 function resetarEstadoVisualDropdowns() {
@@ -235,7 +269,7 @@ function resetarEstadoVisualDropdowns() {
         for (let i = 0; i < sel.options.length; i++) {
             if (sel.options[i].value !== "") sel.options[i].disabled = false;
         }
-        sel.disabled = true;
+        // NÃO DESABILITAMOS O SELECT INTEIRO AQUI MAIS
     });
 }
 
@@ -249,27 +283,48 @@ function atualizarInterfaceUsuario() {
     selPeca2.value = dados.slot2;
     selPeca3.value = dados.slot3;
 
-    if (dados.slot1 === "") {
-        selPeca1.disabled = false;
-        selPeca2.disabled = true;
-        selPeca3.disabled = true;
+    // --- LÓGICA DE "QUEM PODE SER TROCADO?" (STACK LOGIC) ---
+    // Regra Física: Você pode mexer em uma peça se não tiver nada em cima dela.
+    
+    // SLOT 1
+    if (dados.slot2 === "") {
+        selPeca1.disabled = false; // Ninguém no 2, pode mexer no 1
     } else {
-        selPeca1.disabled = true;
+        selPeca1.disabled = true; // Tem peça no 2, trava o 1
+    }
+
+    // SLOT 2
+    if (dados.slot1 === "") {
+        selPeca2.disabled = true; // Não pode por no 2 se o 1 ta vazio (gravidade)
+    } else {
+        // Se tem algo no 1...
+        if (dados.slot3 === "") {
+            selPeca2.disabled = false; // Ninguém no 3, pode mexer no 2
+        } else {
+            selPeca2.disabled = true; // Tem peça no 3, trava o 2
+        }
+    }
+
+    // SLOT 3
+    if (dados.slot2 === "") {
+        selPeca3.disabled = true; // Não pode por no 3 se o 2 ta vazio
+    } else {
+        selPeca3.disabled = false; // O 3 é o topo, sempre pode mexer se o 2 existir
+    }
+
+    // --- BLOQUEIO DE REPETIÇÃO (One per pin) ---
+    // Mesmo podendo trocar, não pode escolher uma peça que já está em outro slot
+    if (dados.slot1 !== "") {
         desabilitarOpcaoVisual(selPeca2, dados.slot1);
         desabilitarOpcaoVisual(selPeca3, dados.slot1);
-
-        if (dados.slot2 === "") {
-            selPeca2.disabled = false;
-        } else {
-            selPeca2.disabled = true;
-            desabilitarOpcaoVisual(selPeca3, dados.slot2);
-
-            if (dados.slot3 === "") {
-                selPeca3.disabled = false;
-            } else {
-                selPeca3.disabled = true;
-            }
-        }
+    }
+    if (dados.slot2 !== "") {
+        desabilitarOpcaoVisual(selPeca1, dados.slot2);
+        desabilitarOpcaoVisual(selPeca3, dados.slot2);
+    }
+    if (dados.slot3 !== "") {
+        desabilitarOpcaoVisual(selPeca1, dados.slot3);
+        desabilitarOpcaoVisual(selPeca2, dados.slot3);
     }
 }
 
@@ -283,8 +338,14 @@ function desabilitarOpcaoVisual(select, valor) {
 
 function manipularMudancaInput(nomeSlot, valor) {
     const chavePino = (pinoAtivo === 1) ? 'pino1' : 'pino2';
+    
+    // Atualiza Estado
     pedidoFinal[chavePino][nomeSlot] = valor;
+    
+    // Chama Renderização (que agora sabe trocar peça)
     renderizarPeca3D(pinoAtivo, nomeSlot, valor);
+    
+    // Atualiza travamentos
     atualizarInterfaceUsuario();
 }
 
@@ -300,8 +361,6 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 window.addEventListener('click', (event) => {
-    // Só permite clicar se tiver 2 pinos E se não estiver animando troca de pinos
-    // (switchFilter.disabled é nossa flag de "animando")
     if (!modoDoisPinos || (switchFilter && switchFilter.disabled)) return;
 
     const rect = renderer.domElement.getBoundingClientRect();
@@ -324,35 +383,24 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// ==========================================
-// CORREÇÃO DO BUG: TRAVA NO BOTÃO DE TROCA
-// ==========================================
+// Evento do Switch (Com Trava de Segurança)
 if (switchFilter) {
     switchFilter.addEventListener('change', (e) => {
-        // 1. TRAVA IMEDIATAMENTE PARA NÃO CLICAR DE NOVO
         switchFilter.disabled = true;
-        
         modoDoisPinos = e.target.checked;
         
         if (modoDoisPinos) {
-            // --- INDO PARA 2 PINOS ---
             gsap.to(pino1.position, { x: -4, duration: 1, ease: "power2.inOut" });
             gsap.to(seletorAtivo.position, { x: -4, duration: 1, ease: "power2.inOut" });
             
             pino2.visible = true;
             pino2.position.set(4, 15, 0); 
-            
             gsap.to(pino2.position, { 
-                y: 0, 
-                duration: 2.0, 
-                ease: "back.out(0.2)", 
-                delay: 0.2,
-                // DESTRAVA SÓ NO FINAL DA ANIMAÇÃO
+                y: 0, duration: 2.0, ease: "back.out(0.2)", delay: 0.2,
                 onComplete: () => { switchFilter.disabled = false; }
             });
 
         } else {
-            // --- VOLTANDO PARA 1 PINO ---
             pinoAtivo = 1;
             atualizarInterfaceUsuario();
             
@@ -360,14 +408,10 @@ if (switchFilter) {
             gsap.to(pino1.position, { x: 0, duration: 1, ease: "power2.inOut", delay: 0.2 });
             
             gsap.to(pino2.position, { 
-                y: 20, 
-                x: 8, 
-                duration: 1.2, 
-                ease: "power2.in",
+                y: 20, x: 8, duration: 1.2, ease: "power2.in",
                 onComplete: () => { 
                     pino2.visible = false; 
                     pino2.position.x = 4;
-                    // DESTRAVA SÓ NO FINAL DA ANIMAÇÃO
                     switchFilter.disabled = false;
                 } 
             });
@@ -390,15 +434,10 @@ if (btnLimpar) {
                 gsap.killTweensOf(peca.position);
 
                 gsap.to(peca.position, {
-                    y: peca.position.y + 15, 
-                    duration: 1.2, 
-                    ease: "power2.in"
+                    y: peca.position.y + 15, duration: 1.2, ease: "power2.in"
                 });
-
                 gsap.to(peca.scale, {
-                    x: 0, y: 0, z: 0,
-                    duration: 1.2, 
-                    ease: "power2.in",
+                    x: 0, y: 0, z: 0, duration: 1.2, ease: "power2.in",
                     onComplete: () => {
                         if (peca.geometry) peca.geometry.dispose();
                         slotObj.remove(peca);
@@ -406,7 +445,6 @@ if (btnLimpar) {
                 });
             }
         });
-
         atualizarInterfaceUsuario();
     });
 }
