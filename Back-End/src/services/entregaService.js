@@ -21,7 +21,8 @@ export class EntregaService {
             // Verifica se já existe alguma entrega "Em Rota"
             // (Medida de segurança, embora não devesse acontecer)
             const emRota = await this.entregaRepository.search({ Status: 'Em Rota' });
-            if (emRota.length > 0) {
+            const emProd = await this.entregaRepository.search({ Status: 'Producao' });
+            if (emRota.length > 0 && emProd.length > 0) {
                 console.warn("WARN: Tentativa de promover entrega, mas uma já está 'Em Rota'.");
                 return;
             }
@@ -93,7 +94,7 @@ export class EntregaService {
         
         // O usuário só pode definir o status para 'Entregue' ou 'Cancelada'
         // (Ele não pode forçar 'Em Rota' ou 'Pendente' manualmente)
-        if (status && (status === 'Entregue' || status === 'Cancelada')) {
+        if (status && (status === 'Entregue' || status === 'Cancelada' || status === 'Producao')) {
             dataToUpdate.Status = status;
         }
 
@@ -112,7 +113,7 @@ export class EntregaService {
         // 4. Lógica de Negócio: Disparar a próxima da fila
         // Se o status *era* 'Em Rota' E o status *novo* (que acabou de ser salvo) 
         // for 'Entregue' ou 'Cancelada', então promove a próxima.
-        if (statusAntigo === 'Em Rota' && 
+        if (((statusAntigo === 'Em Rota' && statusAntigo != 'Producao')|| (statusAntigo != 'Em Rota' && statusAntigo === 'Producao')) &&
            (entregaAtualizada.Status === 'Entregue' || entregaAtualizada.Status === 'Cancelada')) {
             
             // Usamos 'await' para garantir que ele tente promover
