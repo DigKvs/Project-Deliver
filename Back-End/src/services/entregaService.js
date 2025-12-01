@@ -57,7 +57,7 @@ export class EntregaService {
     }
 
     // **** MÉTODO 'CREATE' MODIFICADO ****
-    async create(entregaData) {
+    async create(entregaData, userId) {
         const { descricao, produtos } = entregaData; 
 
         if (!descricao) throw new Error("A 'descricao' é obrigatória.");
@@ -75,7 +75,8 @@ export class EntregaService {
         const dataToCreate = {
             Desc_Entrega: descricao,
             Status: novoStatus, // O status é definido pelo sistema
-            produtos: produtosValidados
+            produtos: produtosValidados,
+            usuario: userId
         };
 
         return await this.entregaRepository.create(dataToCreate);
