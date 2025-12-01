@@ -1,111 +1,161 @@
-// HISTORY TABLE
+// ==========================================
+// 🛠️ CONFIGURAÇÕES E UTILITÁRIOS
+// ==========================================
 
-tableBody = document.querySelector('#historyTable tbody');
+const historyTableBody = document.querySelector('#historyTable tbody');
+const queryTableBody = document.querySelector('#queryTable tbody');
 
-let orderData = [
-    { id: 1654, status: 'Concluído', itens: ['square', 'hexagon', 'circle'], cliente: 'Nycolas Prado' },
-    { id: 1655, status: 'Em Fila', itens: ['circle', 'hexagon', 'square', 'separator', 'square', 'circle', 'hexagon'], cliente: 'Diego Kaviski' },
-    { id: 1656, status: 'Enviado', itens: ['square', 'circle', 'hexagon'], cliente: 'Guilherme Alquieri' },
-    { id: 1657, status: 'Rascunho', itens: ['hexagon', 'circle', 'square'], cliente: 'Juliano Lesinski' },
-    { id: 1658, status: 'Em Produção', itens: ['hexagon', 'circle', 'square'], cliente: 'Isabella Duarte' },
-    { id: 1658, status: 'Cancelado', itens: ['hexagon', 'circle', 'square'], cliente: 'Ana Queiroz' },
-];
+// Mapa para converter o nome do banco (Back-End) para a classe CSS (Front-End)
+const mapaProdutos = {
+    'Quadrado': 'square',
+    'Circulo': 'circle',
+    'Hexagono': 'hexagon'
+    // Adicione 'separator' se tiver lógica para isso no back
+};
 
-function normalizeStatus(status){
-    return status.toLowerCase().replace(/\s/g, '').replace('í','i').replace('ã','a').replace('ç','c');
+// Formata o status para classe CSS (ex: "Em Rota" -> "emrota")
+function normalizeStatus(status) {
+    if (!status) return '';
+    return status.toLowerCase()
+        .replace(/\s/g, '')
+        .replace('í', 'i')
+        .replace('ã', 'a')
+        .replace('ç', 'c')
+        .replace('õ', 'o');
 }
 
-function createRow(data){
+// ==========================================
+// 🏗️ CRIAÇÃO DAS LINHAS (DOM)
+// ==========================================
+
+function createRow(data) {
     const row = document.createElement('tr');
 
-    // - ID PEDIDO -
+    // --- ID (Pegamos os ultimos 4 digitos para ficar curto igual seu exemplo) ---
     let tdID = document.createElement('td');
-    tdID.textContent = data.id;
+    tdID.textContent = data.id.slice(-4).toUpperCase(); // Ex: ...A1B2
     row.appendChild(tdID);
 
-    // - STATUS -
+    // --- STATUS ---
     let tdStatus = document.createElement('td');
     let statusSpan = document.createElement('span');
-
+    
+    // Usa o status que vem do banco
     statusSpan.classList.add('status', normalizeStatus(data.status));
     statusSpan.textContent = data.status;
 
     tdStatus.appendChild(statusSpan);
     row.appendChild(tdStatus);
 
-    // - ITEM -
+    // --- ITENS (Converter Produtos em Ícones) ---
     let tdItem = document.createElement('td');
 
-    data.itens.forEach(itemClass => {
-        let itemSpan = document.createElement('span');
-        itemSpan.classList.add('item', itemClass)
-        tdItem.appendChild(itemSpan);
-    });
+    if (data.produtos && Array.isArray(data.produtos)) {
+        cont = 0
+        data.produtos.forEach(item => {
+            // item.nome vem do DTO. Se vier aninhado, ajuste para item.produto.nome
+            // Aqui assumo que o DTO entrega uma lista simplificada ou o objeto populado
+            
+            // Verificação de segurança para pegar o nome
+            let nomeProduto = "";
+            if (item.nome) nomeProduto = item.nome; // Se DTO já limpou
+            else if (item.produto && item.produto.nome) nomeProduto = item.produto.nome; // Se vier populado bruto
+            else if (typeof item.produto === 'string') nomeProduto = item.produto; // Se vier só string
+
+            const classeCss = mapaProdutos[nomeProduto]; // Fallback para square se não achar
+
+            if (cont == 3){
+                let itemSpan1 = document.createElement('span');
+                itemSpan1.classList.add('item', 'separator');
+                tdItem.appendChild(itemSpan1);
+            }
+            
+            let itemSpan = document.createElement('span');
+           
+            itemSpan.classList.add('item', classeCss);
+            
+            tdItem.appendChild(itemSpan);
+             
+            cont = cont + 1
+        });
+    }
     row.appendChild(tdItem);
 
-    /// - CLIENTE -
+    // --- CLIENTE ---
     let tdClient = document.createElement('td');
-    tdClient.textContent = data.cliente;
+    // Tenta pegar o nome do usuário populado, senão coloca "Desconhecido"
+    console.log(data.usuario)
+    tdClient.textContent = data.usuario ? data.usuario.nome : 'Cliente';
     row.appendChild(tdClient);
 
     return row;
 }
 
-tableBody.innerHTML = ''; // Limpar linhas de exemplo
+// ==========================================
+// 🚀 BUSCAR DADOS DA API
+// ==========================================
 
-orderData.forEach(data => {
-    const newRow = createRow(data);
-    tableBody.appendChild(newRow);
-});
+async function carregarDados() {
+    const token = localStorage.getItem("token");
 
+    if (!token) {
+        console.warn("Sem token. O usuário precisa logar para ver o histórico.");
+        return;
+    }
 
-// QUERY TABLE
+    try {
+        // Busca todas as entregas (ordenadas por mais recente se sua API suportar ?sort=recent)
+        const response = await fetch('http://localhost:3000/entregas?sort=recent', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-const queryTableBody = document.querySelector('#queryTable tbody');
+        if (!response.ok) {
+            throw new Error('Erro ao buscar entregas');
+        }
 
-let queryData = [
-    { id: 1001, service: 'Prioridade', itens: ['circle', 'hexagon', 'square'] },
-    { id: 1002, service: 'Express', itens: ['hexagon', 'square', 'circle']},
-    { id: 1003, service: 'Padrão', itens: ['circle', 'hexagon', 'square', 'separator', 'hexagon', 'square', 'circle']},
-    { id: 1004, service: 'Prioridade', itens: ['square', 'hexagon','circle']},
-    { id: 1005, service: 'Express', itens: ['hexagon', 'circle', 'square']},
-];
+        const listaEntregas = await response.json();
 
-function normalizeService(service) {
-    return service.toLowerCase().replace(/\s/g, '').replace('ã', 'a').replace('ç', 'c');
+        // 1. Limpa as tabelas
+        historyTableBody.innerHTML = '';
+        queryTableBody.innerHTML = '';
+
+        // 2. Preenche as tabelas
+        listaEntregas.forEach(entrega => {
+            // Cria o objeto de dados simplificado para a função createRow
+            const dadosFormatados = {
+                id: entrega.id,
+                status: entrega.status, // "Pendente", "Em Rota", etc.
+                produtos: entrega.produtos, // Array de produtos
+                usuario: entrega.usuario // Objeto usuário (se populado)
+            };
+
+            // -- Tabela HISTÓRICO (Todas as entregas) --
+            const rowHistory = createRow(dadosFormatados);
+            historyTableBody.appendChild(rowHistory);
+
+            // -- Tabela QUERY (Exemplo: Apenas as 'Pendente' ou 'Em Rota') --
+            // Você pode ajustar essa lógica. Aqui coloquei as Pendentes.
+            if (entrega.status === 'Pendente' || entrega.status === 'Em Rota') {
+                // Clona a linha ou cria uma nova com layout diferente se precisar
+                const rowQuery = createRow(dadosFormatados);
+                
+                // Se a Query Table tiver coluna "Service" em vez de "Status":
+                // Você pode manipular rowQuery aqui antes de dar append.
+                
+                queryTableBody.appendChild(rowQuery);
+            }
+        });
+
+    } catch (error) {
+        console.error('Erro:', error);
+        // Opcional: Mostrar mensagem de erro na tabela
+        historyTableBody.innerHTML = '<tr><td colspan="4">Erro ao carregar dados.</td></tr>';
+    }
 }
 
-function createQueryRow(data) {
-    const row = document.createElement('tr');
-
-    let tdID = document.createElement('td');
-    tdID.textContent = data.id;
-    row.appendChild(tdID);
-
-    let tdItem = document.createElement('td');
-
-    data.itens.forEach(itemClass => {
-        let itemSpan = document.createElement('span');
-        itemSpan.classList.add('item', itemClass);
-        tdItem.appendChild(itemSpan);
-    });
-    row.appendChild(tdItem);
-
-    let tdService = document.createElement('td');
-    let serviceSpan = document.createElement('span');
-
-    serviceSpan.classList.add('status', normalizeService(data.service));
-    serviceSpan.textContent = data.service;
-
-    tdService.appendChild(serviceSpan);
-    row.appendChild(tdService);
-
-    return row;
-}
-
-queryTableBody.innerHTML = ''; 
-
-queryData.forEach(data => {
-    const newRow = createQueryRow(data);
-    queryTableBody.appendChild(newRow);
-});
+// Carrega assim que a página abrir
+window.addEventListener('load', carregarDados);
