@@ -1,8 +1,8 @@
 :root {
-    --background: #121212;
-    --header: #1E1E1E;
+    --background: #111111;
+    --header: #111111;
     --outline: #3a3a3a;
-    --text: #98989a;
+    --text: #9B9B9B;
     --rascunho1: #202022;
     --rascunho2: #333338;
     --emfila1: #1E1E1E;
@@ -23,7 +23,7 @@
     --hexagon2: #4ADE80;
 }
 body {
-    font-size: 12px;
+    font-size: 14px;
 }
 .screen {
     background-color: var(--background);
@@ -85,7 +85,7 @@ p {
     border-collapse: separate;
     border-spacing: 0;
     border-radius: 6px;
-    overflow: hidden;
+    overflow-y: auto;
     border: 1px solid var(--outline);
 }
 #historyTable thead th,

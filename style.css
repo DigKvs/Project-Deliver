@@ -1,14 +1,15 @@
 :root {
-    --primary-color: #6F0825;
+    --primary-color: #287897;
     --cinza-border: #262626;
-    --background-color: #141414;
+    --background-color: #111111;
     --background-light-color: #222222;
     --text-color: #ffffff;
+    --secondary: #BA1A1A;
     --third-color: #d4d4d4;
     --notification-color: #ADDDF8;
     --link-color: #4285F4;
-    --header-background: #1A1A1A;
-    --cinza-texto: #616161;
+    --header-background: #111111;
+    --cinza-texto: #9B9B9B;
 }
 
 * {
@@ -21,12 +22,12 @@
 }
 
 p {
-    font-size: 80%;
+    font-size: 100%;
 }
 
 body {
     font-family: 'Arial', sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.5;
     color: #333;
     background-color: #f4f4f4;
@@ -528,6 +529,7 @@ mainAboutUs p {
 }
 
 .icons {
+    margin-top: 10px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -541,14 +543,14 @@ mainAboutUs p {
 }
 
 .cardTeam h6 {
-    font-size: 100%;
+    font-size: 120%;
     margin-bottom: 15px;
     text-align: center;
 }
 
 .cardTeam p {
     text-align: center;
-    font-size: 80%;
+    font-size: 100%;
     margin-bottom: 10px;
 }
 
@@ -606,7 +608,7 @@ main_home {
 .principal1 h4 {
     font-size: 100%;
     margin-bottom: 20px;
-    color: var(--cinza-texto);
+    color: var(--secondary);
 }
 
 .principal2 {
@@ -629,7 +631,7 @@ main_home {
 }
 
 .subprincipal p {
-    font-size: 80%;
+    font-size: 100%;
     color: var(--cinza-texto);
 }
 
@@ -713,7 +715,7 @@ main_home2 {
 }
 
 .ferramenta p {
-    font-size: 80%;
+    font-size: 100%;
     margin-top: 25px;
 }
 
@@ -789,7 +791,7 @@ main_home2 {
 }
 
 .subprincipal2 p {
-    font-size: 80%;
+    font-size: 100%;
     color: var(--cinza-texto);
 }
 
@@ -826,7 +828,7 @@ main_historic {
 }
 
 .txtLine p {
-    font-size: 90%;
+    font-size: 100%;
     color: var(--cinza-texto);
 }
 
@@ -1056,7 +1058,7 @@ main_historic {
 
 .select-wrapper label {
     font-family: sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-color);
     width: 70px; 
     text-align: right;
@@ -1073,7 +1075,7 @@ main_historic {
     background-color: var(--cinza-border);
     color: var(--text-color);
     font-family: sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     -webkit-appearance: none;
