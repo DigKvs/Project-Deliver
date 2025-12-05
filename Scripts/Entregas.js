@@ -7,17 +7,17 @@ import { pedidoFinal } from "../pino3d.js";
 // ===============================
 // 🔐 VERIFICAÇÃO DE AUTENTICAÇÃO
 // ===============================
-window.addEventListener("load", () => {
-    const token = localStorage.getItem("token");
+// window.addEventListener("load", () => {
+//     const token = localStorage.getItem("token");
 
-    if (!token) {
-        alert("🚫 Acesso negado! Faça login primeiro.");
-        window.location.href = "index.html";
-        return;
-    }
+//     if (!token) {
+//         alert("🚫 Acesso negado! Faça login primeiro.");
+//         window.location.href = "index.html";
+//         return;
+//     }
 
-    console.log("✅ Token carregado. Usuário autenticado.");
-});
+//     console.log("✅ Token carregado. Usuário autenticado.");
+// });
 
 
 // ===============================

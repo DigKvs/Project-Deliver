@@ -5,6 +5,7 @@
     --background-light-color: #222222;
     --text-color: #ffffff;
     --secondary: #BA1A1A;
+    --secondary-dark: #590422;
     --third-color: #d4d4d4;
     --notification-color: #ADDDF8;
     --link-color: #4285F4;
@@ -211,7 +212,7 @@ mainLogin {
     
     /* Remoção da position:relative e top: 5%; */
     
-    background-color: var(--primary-color);
+    background-color: var(--secondary);
     color: var(--text-color);
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -526,6 +527,11 @@ mainAboutUs p {
 .person {
     height: 175px;
     border-radius: 50%;
+}
+
+.icon{  
+    color: var(--secondary);
+    font-size: 24px;
 }
 
 .icons {
@@ -910,12 +916,13 @@ main_historic {
 }
 
 .switch {
-  --_switch-bg-clr: var(--primary-color);
+  --_switch-bg-clr: var(--background-color);
   --_switch-padding: 4px;
-  --_slider-bg-clr: #9b111e;
-  --_slider-bg-clr-on: #9b111e;
+  --_slider-bg-clr: var(--secondary-dark);
+  --_slider-bg-clr-on: var(--secondary-dark);
   --_slider-txt-clr: #ffffff;
   --_label-padding: 1rem 2rem;
+  outline: solid 1px white;
   --_switch-easing: cubic-bezier(
     0.47,
     1.64,
@@ -970,8 +977,9 @@ main_historic {
     background-color 500ms ease-in-out;
   z-index: -1;
   box-shadow:
-    inset 0 1px 1px rgba(0, 0, 0, 0.3),
-    0 1px rgba(255, 255, 255, 0.3);
+  0 0 0 2px var(--secondary); /* OUTLINE */
+  
+
 }
 
 .switch::after {
@@ -1024,8 +1032,8 @@ main_historic {
 }
 
 .pinChoice {
-    background-color: var(--primary-color);
-    border: 1px solid #e0e0e0;
+    background-color: transparent;
+    /* border: 1px solid #e0e0e0; */
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
@@ -1104,6 +1112,17 @@ main_historic {
     display: flex;
     justify-content: center;
     align-items: start;
+}
+
+#Limpar{
+    margin-top: 10px; 
+    background-color: var(--secondary-dark); 
+    outline: 2px solid var(--secondary);
+    color: white; 
+    border: none; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+    border-radius: 4px;
 }
 
 .buttonPedido {
