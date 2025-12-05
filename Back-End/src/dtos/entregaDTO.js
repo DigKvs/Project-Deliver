@@ -7,6 +7,16 @@ export class EntregaDTO {
         this.criadoEm = entrega.createdAt;
         this.atualizadoEm = entrega.updatedAt;
 
+        if (entrega.usuario && typeof entrega.usuario === 'object') {
+            this.usuario = {
+                id: entrega.usuario._id,
+                nome: entrega.usuario.nome,
+                email: entrega.usuario.email
+            };
+        } else {
+            // Se não tiver usuário vinculado ou se o populate falhou
+            this.usuario = null; 
+        }
         // Verifica se 'produtos' existe e foi populado
         if (entrega.produtos && entrega.produtos.length > 0) {
             this.produtos = entrega.produtos.map(item => {

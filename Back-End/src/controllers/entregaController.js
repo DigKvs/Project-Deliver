@@ -55,8 +55,9 @@ export class EntregaController {
 
     create = async (req, res) => {
         try {
+            const userId = req.user.id;
             // O req.body (ex: {"descricao": "...", "produtos": [...]})
-            const newEntrega = await this.entregaService.create(req.body);
+            const newEntrega = await this.entregaService.create(req.body, userId);
             
             // Busca o item recém-criado para "popular" os produtos
             const entregaCompleta = await this.entregaService.getById(newEntrega._id);
