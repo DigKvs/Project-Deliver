@@ -10,8 +10,13 @@ const entregaSchema = new mongoose.Schema({
         type: String,
         required: true,
         // Enum define os únicos valores permitidos
-        enum: ['Pendente', 'Em Rota', 'Entregue', 'Cancelada'],
+        enum: ['Pendente', 'Em Rota', 'Entregue', 'Cancelada', 'Producao'],
         default: 'Pendente' // Valor padrão ao criar
+    },
+    usuario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Referência ao Model 'User' (verifique se o nome do model está exato)
+        required: true // Define se é obrigatório ter um usuário vinculado
     },
     // Relação N:N com Produtos
     produtos: [
@@ -29,10 +34,12 @@ const entregaSchema = new mongoose.Schema({
             }
         }
     ]
+
 }, { 
     timestamps: true, // Adiciona createdAt e updatedAt
     collection: 'Entrega' // Nome da coleção no banco
 });
+
 
 const Entrega = mongoose.model('Entrega', entregaSchema);
 export default Entrega;

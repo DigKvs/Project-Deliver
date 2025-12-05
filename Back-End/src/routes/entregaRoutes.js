@@ -5,32 +5,8 @@ import { authMiddleware } from '../middleware/authMiddleware.js';
 const router = express.Router();
 const controller = new EntregaController();
 
-// router.use(authMiddleware);
+router.use(authMiddleware);
 
-/**
- * @swagger
- * /entregas/em-rota:
- *   get:
- *     summary: Retorna a entrega que está atualmente "Em Rota"
- *     description: |
- *       Essa rota retorna **apenas a entrega que possui o status "Em Rota"**.
- *       Caso não exista nenhuma entrega nesse status, retorna 404.
- *     tags: [Entregas]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       '200':
- *         description: Entrega com status "Em Rota" encontrada
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Entrega'
- *       '404':
- *         description: Nenhuma entrega "Em Rota" encontrada
- *       '401':
- *         description: Token inválido ou ausente
- */
-router.get('/entregas/em-rota', controller.getSomenteEntrega);
 /**
  * @swagger
  * tags:
@@ -40,15 +16,123 @@ router.get('/entregas/em-rota', controller.getSomenteEntrega);
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *
+ *     ProdutoItem:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "69176f147698683744dd52ac"
+ *         nome:
+ *           type: string
+ *           example: "Circulo"
+ *         ordem:
+ *           type: number
+ *           example: 1
+ *
+ *     Entrega:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "6928a6e3f79df764dcf4da48"
+ *         descricao:
+ *           type: string
+ *           example: "Entrega do pino 3D"
+ *         status:
+ *           type: string
+ *           enum: [Pendente, Em Rota, Entregue, Cancelada, Producao]
+ *           example: "Entregue"
+ *         criadoEm:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-27T19:30:43.244Z"
+ *         atualizadoEm:
+ *           type: string
+ *           format: date-time
+ *           example: "2025-11-28T17:08:33.644Z"
+ *         produtos:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/ProdutoItem'
+ *
+ *     EntregaCreateInput:
+ *       type: object
+ *       required:
+ *         - descricao
+ *         - produtos
+ *       properties:
+ *         descricao:
+ *           type: string
+ *           example: "Entrega do pino 3D"
+ *         produtos:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: "69176f147698683744dd52ac"
+ *               ordem:
+ *                 type: number
+ *                 example: 1
+ *
+ *     EntregaUpdateInput:
+ *       type: object
+ *       properties:
+ *         descricao:
+ *           type: string
+ *           example: "Entrega ajustada"
+ *         status:
+ *           type: string
+ *           enum: [Pendente, Em Rota, Entregue, Cancelada, Producao]
+ *           example: "Entregue"
+ *         produtos:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: "69176f147698683744dd52ac"
+ *               ordem:
+ *                 type: number
+ *                 example: 1
+ */
+
+/**
+ * @swagger
+ * /entregas/em-rota:
+ *   get:
+ *     summary: Retorna a entrega que está atualmente "Em Rota"
+ *     tags: [Entregas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Entrega encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Entrega'
+ *       404:
+ *         description: Nenhuma entrega com status Em Rota encontrada
+ */
+router.get('/entregas/em-rota', controller.getSomenteEntrega);
+
+/**
+ * @swagger
  * /entregas:
  *   post:
  *     summary: Cria uma nova entrega
  *     description: |
- *       Cria uma entrega com status automático:
- *       - Se não existir entrega em "Em Rota", esta se torna "Em Rota".
- *       - Caso exista, esta se torna "Pendente".
+ *       Cria uma nova entrega aplicando regras de status:
  *
- *       O campo **produto** pode ser o ID ou o Nome do produto.
+ *       - Se nenhuma entrega estiver "Em Rota", esta vira **Em Rota**
+ *       - Caso contrário, vira **Pendente**
+ *
  *     tags: [Entregas]
  *     security:
  *       - bearerAuth: []
@@ -56,15 +140,17 @@ router.get('/entregas/em-rota', controller.getSomenteEntrega);
  *       required: true
  *       content:
  *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EntregaCreateInput'
  *     responses:
  *       201:
  *         description: Entrega criada com sucesso
  *         content:
  *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Entrega'
  *       400:
- *         description: Erro de validação
- *       401:
- *         description: Não autorizado
+ *         description: Dados inválidos
  */
 router.post('/entregas', controller.create);
 
@@ -73,7 +159,7 @@ router.post('/entregas', controller.create);
  * /entregas:
  *   get:
  *     summary: Lista todas as entregas
- *     description: Lista todas as entregas, podendo aplicar ordenação por data.
+ *     description: Retorna todas as entregas já convertidas para o formato de resposta.
  *     tags: [Entregas]
  *     security:
  *       - bearerAuth: []
@@ -83,7 +169,7 @@ router.post('/entregas', controller.create);
  *         schema:
  *           type: string
  *           enum: [recent]
- *         description: Ordena pelas entregas mais recentes (createdAt)
+ *         description: Ordena pela mais recente
  *     responses:
  *       200:
  *         description: Lista de entregas
@@ -91,8 +177,8 @@ router.post('/entregas', controller.create);
  *           application/json:
  *             schema:
  *               type: array
- *       401:
- *         description: Não autorizado
+ *               items:
+ *                 $ref: '#/components/schemas/Entrega'
  */
 router.get('/entregas', controller.getAll);
 
@@ -107,10 +193,9 @@ router.get('/entregas', controller.getAll);
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
- *         description: ID da entrega
  *     responses:
  *       200:
  *         description: Entrega encontrada
@@ -120,8 +205,6 @@ router.get('/entregas', controller.getAll);
  *               $ref: '#/components/schemas/Entrega'
  *       404:
  *         description: Entrega não encontrada
- *       401:
- *         description: Não autorizado
  */
 router.get('/entregas/:id', controller.getById);
 
@@ -129,20 +212,19 @@ router.get('/entregas/:id', controller.getById);
  * @swagger
  * /entregas/{id}:
  *   put:
- *     summary: Atualiza uma entrega
+ *     summary: Atualiza uma entrega existente
  *     description: |
- *       Atualiza os dados de uma entrega:
- *       - O status só pode ser **Entregue** ou **Cancelada**.
- *       - Se uma entrega "Em Rota" for alterada, a próxima "Pendente" será promovida automaticamente.
+ *       Atualiza campos da entrega.  
+ *       Caso altere uma entrega "Em Rota", a próxima pendente assume sua posição.
  *     tags: [Entregas]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: string
- *         required: true
  *     requestBody:
  *       required: true
  *       content:
@@ -156,8 +238,6 @@ router.get('/entregas/:id', controller.getById);
  *         description: Dados inválidos
  *       404:
  *         description: Entrega não encontrada
- *       401:
- *         description: Não autorizado
  */
 router.put('/entregas/:id', controller.update);
 
@@ -165,9 +245,10 @@ router.put('/entregas/:id', controller.update);
  * @swagger
  * /entregas/{id}:
  *   delete:
- *     summary: Deleta uma entrega
+ *     summary: Remove uma entrega
  *     description: |
- *       À exclusão de uma entrega em "Em Rota", a próxima "Pendente" assume seu lugar.
+ *       Se a entrega removida estiver "Em Rota",
+ *       a próxima pendente assume a rota automaticamente.
  *     tags: [Entregas]
  *     security:
  *       - bearerAuth: []
@@ -182,10 +263,7 @@ router.put('/entregas/:id', controller.update);
  *         description: Entrega removida com sucesso
  *       404:
  *         description: Entrega não encontrada
- *       401:
- *         description: Não autorizado
  */
 router.delete('/entregas/:id', controller.delete);
-
 
 export default router;

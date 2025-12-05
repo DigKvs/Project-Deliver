@@ -3,6 +3,7 @@ import authRoutes from "./authRoutes.js";
 import userRoutes from "./userRoutes.js";
 import produtoRoutes from "./produtoRoutes.js";
 import entregaRoutes from "./entregaRoutes.js";
+import estoqueRoutes from "./estoqueRoutes.js"
 
 const routes = (app) => {
 
@@ -17,6 +18,7 @@ const routes = (app) => {
     app.use(authRoutes);
     app.use(produtoRoutes);
     app.use(entregaRoutes);
+    app.use(estoqueRoutes)
 };
 
 export default routes;

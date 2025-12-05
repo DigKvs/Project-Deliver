@@ -14,10 +14,12 @@ export class EntregaRepository extends BaseRepository {
     }
 
     // Sobrescreve o findAll para popular também
-    async findAll(filter = {}) {
-        return await this.model.find(filter)
-            .populate('produtos.produto');
-    }
+    async findAll(filter = {}, sortOptions = {}) {
+    return await this.model.find(filter)
+        .populate('produtos.produto')
+        .populate('usuario', 'nome') // <--- ISSO É ESSENCIAL
+        .sort(sortOptions);
+}
     
     /**
      * Encontra a entrega 'Pendente' mais antiga (por data de criação)
