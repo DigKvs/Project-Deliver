@@ -1,16 +1,14 @@
 :root {
-    --primary-color: #287897;
+    --primary-color: #6F0825;
     --cinza-border: #262626;
-    --background-color: #111111;
+    --background-color: #141414;
     --background-light-color: #222222;
     --text-color: #ffffff;
-    --secondary: #BA1A1A;
-    --secondary-dark: #590422;
     --third-color: #d4d4d4;
     --notification-color: #ADDDF8;
     --link-color: #4285F4;
-    --header-background: #111111;
-    --cinza-texto: #9B9B9B;
+    --header-background: #1A1A1A;
+    --cinza-texto: #616161;
 }
 
 * {
@@ -23,12 +21,12 @@
 }
 
 p {
-    font-size: 100%;
+    font-size: 80%;
 }
 
 body {
     font-family: 'Arial', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
     color: #333;
     background-color: #f4f4f4;
@@ -212,7 +210,7 @@ mainLogin {
     
     /* Remoção da position:relative e top: 5%; */
     
-    background-color: var(--secondary);
+    background-color: var(--primary-color);
     color: var(--text-color);
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -529,13 +527,7 @@ mainAboutUs p {
     border-radius: 50%;
 }
 
-.icon{  
-    color: var(--secondary);
-    font-size: 24px;
-}
-
 .icons {
-    margin-top: 10px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -549,14 +541,14 @@ mainAboutUs p {
 }
 
 .cardTeam h6 {
-    font-size: 120%;
+    font-size: 100%;
     margin-bottom: 15px;
     text-align: center;
 }
 
 .cardTeam p {
     text-align: center;
-    font-size: 100%;
+    font-size: 80%;
     margin-bottom: 10px;
 }
 
@@ -581,7 +573,6 @@ main_home {
     display: grid;
     grid-template-columns: 60% 40% ;
     grid-template-rows: 1fr ;
-    overflow: hidden;
 }
 
 .principalHome {
@@ -615,7 +606,7 @@ main_home {
 .principal1 h4 {
     font-size: 100%;
     margin-bottom: 20px;
-    color: var(--secondary);
+    color: var(--cinza-texto);
 }
 
 .principal2 {
@@ -638,7 +629,7 @@ main_home {
 }
 
 .subprincipal p {
-    font-size: 100%;
+    font-size: 80%;
     color: var(--cinza-texto);
 }
 
@@ -722,7 +713,7 @@ main_home2 {
 }
 
 .ferramenta p {
-    font-size: 100%;
+    font-size: 80%;
     margin-top: 25px;
 }
 
@@ -798,7 +789,7 @@ main_home2 {
 }
 
 .subprincipal2 p {
-    font-size: 100%;
+    font-size: 80%;
     color: var(--cinza-texto);
 }
 
@@ -835,7 +826,7 @@ main_historic {
 }
 
 .txtLine p {
-    font-size: 100%;
+    font-size: 90%;
     color: var(--cinza-texto);
 }
 
@@ -917,13 +908,12 @@ main_historic {
 }
 
 .switch {
-  --_switch-bg-clr: var(--background-color);
+  --_switch-bg-clr: var(--primary-color);
   --_switch-padding: 4px;
-  --_slider-bg-clr: var(--secondary-dark);
-  --_slider-bg-clr-on: var(--secondary-dark);
+  --_slider-bg-clr: #9b111e;
+  --_slider-bg-clr-on: #9b111e;
   --_slider-txt-clr: #ffffff;
   --_label-padding: 1rem 2rem;
-  outline: solid 1px white;
   --_switch-easing: cubic-bezier(
     0.47,
     1.64,
@@ -978,9 +968,8 @@ main_historic {
     background-color 500ms ease-in-out;
   z-index: -1;
   box-shadow:
-  0 0 0 2px var(--secondary); /* OUTLINE */
-  
-
+    inset 0 1px 1px rgba(0, 0, 0, 0.3),
+    0 1px rgba(255, 255, 255, 0.3);
 }
 
 .switch::after {
@@ -1033,8 +1022,8 @@ main_historic {
 }
 
 .pinChoice {
-    background-color: transparent;
-    /* border: 1px solid #e0e0e0; */
+    background-color: var(--primary-color);
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
@@ -1067,7 +1056,7 @@ main_historic {
 
 .select-wrapper label {
     font-family: sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-color);
     width: 70px; 
     text-align: right;
@@ -1084,7 +1073,7 @@ main_historic {
     background-color: var(--cinza-border);
     color: var(--text-color);
     font-family: sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     -webkit-appearance: none;
@@ -1113,17 +1102,6 @@ main_historic {
     display: flex;
     justify-content: center;
     align-items: start;
-}
-
-#Limpar{
-    margin-top: 10px; 
-    background-color: var(--secondary-dark); 
-    outline: 2px solid var(--secondary);
-    color: white; 
-    border: none; 
-    padding: 5px 10px; 
-    cursor: pointer; 
-    border-radius: 4px;
 }
 
 .buttonPedido {

@@ -91,6 +91,12 @@ async function enviarEntrega() {
     // 2 — gera o JSON unificado (como você pediu!)
     const produtosFinal = gerarProdutosUnificados(pedidoFinal);
 
+    if (produtosFinal.length < 4) {
+    for (let i = 1; i < 4; i++) {
+        produtosFinal.push({ produto: "-" });
+    }
+}
+
     const jsonFinal = {
         descricao: "Entrega do pino 3D",
         produtos: produtosFinal
