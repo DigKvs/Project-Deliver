@@ -16,6 +16,7 @@ export class EntregaService {
     async getSomenteEntrega() {
         return await this.entregaRepository.findAll({ Status: "Em Rota" });
     }
+    
     async #promoverProximaEntrega() {
         try {
             // Verifica se já existe alguma entrega "Em Rota"
@@ -40,6 +41,11 @@ export class EntregaService {
         }
     }
     // --------------------------------------
+    async getEmProducao() {
+        // Certifique-se que no seu Banco/Model o status está escrito como 'Producao' ou 'Em Produção'
+        // Baseado no seu model anterior, você usou 'Producao' (sem til)
+        return await this.entregaRepository.findAll({ Status: 'Producao' });
+    }
 
     async getAll(sortOptions = {}) {
         return await this.entregaRepository.findAll({}, sortOptions);

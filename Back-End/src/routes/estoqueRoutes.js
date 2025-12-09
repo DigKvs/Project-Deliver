@@ -78,6 +78,8 @@ router.get('/estoque', controller.getAll);
  *       200:
  *         description: Item encontrado
  */
+
+
 router.get('/estoque/:id', controller.getById);
 
 /**
