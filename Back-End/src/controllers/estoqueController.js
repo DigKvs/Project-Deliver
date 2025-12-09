@@ -15,6 +15,8 @@ export class ItemEstoqueController {
         }
     }
 
+    
+
     getById = async (req, res) => {
         try {
             const item = await this.service.getById(req.params.id);

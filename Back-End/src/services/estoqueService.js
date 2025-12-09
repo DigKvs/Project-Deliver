@@ -22,6 +22,13 @@ export class ItemEstoqueService {
         }
         return item;
     }
+    // ... outros métodos ...
+
+    /**
+     * Busca apenas as entregas com status "Producao"
+     */
+    
+    // ...
 
     async create(data) {
         const { produtoId, quantidade } = data;

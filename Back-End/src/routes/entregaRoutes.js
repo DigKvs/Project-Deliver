@@ -124,6 +124,28 @@ router.get('/entregas/em-rota', controller.getSomenteEntrega);
 
 /**
  * @swagger
+ * /entregas/producao:
+ *   get:
+ *     summary: Lista apenas as entregas em "Producao"
+ *     tags: [Entregas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Lista de entregas em produção
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Entrega'
+ *       '401':
+ *         description: Não autorizado
+ */
+router.get('/entregas/producao', controller.getEmProducao);
+
+/**
+ * @swagger
  * /entregas:
  *   post:
  *     summary: Cria uma nova entrega
