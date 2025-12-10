@@ -6,6 +6,10 @@ const entregaSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    QuantidadePecas: {
+        type: Number,
+        default: 0
+    },
     Status: {
         type: String,
         required: true,
