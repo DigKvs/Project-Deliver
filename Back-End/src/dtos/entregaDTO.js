@@ -3,7 +3,7 @@ export class EntregaDTO {
         this.id = entrega._id;
         this.descricao = entrega.Desc_Entrega;
         this.status = entrega.Status;
-
+        this.quantidadePecas = entrega.QuantidadePecas;
         this.criadoEm = entrega.createdAt;
         this.atualizadoEm = entrega.updatedAt;
 

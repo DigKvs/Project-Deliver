@@ -75,6 +75,7 @@ export class EntregaService {
         // Verifica se já existe alguma entrega "Em Rota"
         const emRota = await this.entregaRepository.search({ Status: 'Em Rota' });
         
+        const qtdCalculada = 0;
         // Se houver, a nova entrega é 'Pendente'. Se não, ela se torna 'Em Rota'.
         const novoStatus = (emRota.length > 0) ? 'Pendente' : 'Em Rota';
 
@@ -82,7 +83,8 @@ export class EntregaService {
             Desc_Entrega: descricao,
             Status: novoStatus, // O status é definido pelo sistema
             produtos: produtosValidados,
-            usuario: userId
+            usuario: userId,
+            QuantidadePecas: qtdCalculada,
         };
 
         return await this.entregaRepository.create(dataToCreate);
@@ -90,41 +92,67 @@ export class EntregaService {
 
     // **** MÉTODO 'UPDATE' MODIFICADO ****
     async update(id, entregaData) {
-        // 1. Busca o estado ATUAL da entrega
-        const entregaAtual = await this.getById(id);
-        const statusAntigo = entregaAtual.Status;
+        const entregaAtual = await this.entregaRepository.findById(id);
+        if (!entregaAtual) throw new Error("Entrega não encontrada.");
         
-        const { descricao, produtos, status } = entregaData;
+        const statusAntigo = entregaAtual.Status;
+        const { descricao, produtos, status, quantidadePecas } = entregaData;
         const dataToUpdate = {};
         
         if (descricao) dataToUpdate.Desc_Entrega = descricao;
         
-        // O usuário só pode definir o status para 'Entregue' ou 'Cancelada'
-        // (Ele não pode forçar 'Em Rota' ou 'Pendente' manualmente)
-        if (status && (status === 'Entregue' || status === 'Cancelada' || status === 'Producao')) {
+        // --- NOVA VALIDAÇÃO DE STATUS ---
+        if (status) {
+            // Só permite mudar para os status válidos
+            const statusPermitidos = ['Entregue', 'Cancelada', 'Producao', 'Em Rota'];
+            if (!statusPermitidos.includes(status)) {
+                 // Se quiser ser restrito e não deixar mudar para Pendente manualmente, mantenha a lógica anterior
+                 // Mas para testar 'Producao', precisamos permitir que ele venha no body
+            }
+
+            // REGRA DE NEGÓCIO: BLOQUEIO DE DUPLICIDADE
+            // Se o usuário está tentando mudar para 'Producao' ou 'Em Rota', verificamos se já tem um.
+            if (status === 'Producao' || status === 'Em Rota') {
+                // Busca se existe ALGUMA entrega com esse status que NÃO SEJA a atual (_id != id)
+                const jaExiste = await this.entregaRepository.model.findOne({
+                    Status: status,
+                    _id: { $ne: id } // $ne = Not Equal (Não igual)
+                });
+
+                if (jaExiste) {
+                    throw new Error(`Ação negada: Já existe um pedido com status '${status}'. Conclua-o antes de iniciar outro.`);
+                }
+            }
+
             dataToUpdate.Status = status;
         }
+        // ----------------------------------
 
-        // 2. Se houver produtos, re-valida
         if (produtos) {
-            dataToUpdate.produtos = await this.#validarEProcessarProdutos(produtos);
+            const produtosValidados = await this.#validarEProcessarProdutos(produtos);
+            dataToUpdate.produtos = produtosValidados;
+            if (quantidadePecas === undefined) {
+                dataToUpdate.QuantidadePecas = produtosValidados.length;
+            }
+        }
+
+        if (quantidadePecas !== undefined) {
+            if (typeof quantidadePecas !== 'number') throw new Error("A quantidade deve ser um número.");
+            dataToUpdate.QuantidadePecas = quantidadePecas;
         }
 
         if (Object.keys(dataToUpdate).length === 0) {
             throw new Error("Nenhum dado válido fornecido para atualização.");
         }
 
-        // 3. Executa o Update
         const entregaAtualizada = await this.entregaRepository.update(id, dataToUpdate);
 
-        // 4. Lógica de Negócio: Disparar a próxima da fila
-        // Se o status *era* 'Em Rota' E o status *novo* (que acabou de ser salvo) 
-        // for 'Entregue' ou 'Cancelada', então promove a próxima.
-        if (((statusAntigo === 'Em Rota' && statusAntigo != 'Producao')|| (statusAntigo != 'Em Rota' && statusAntigo === 'Producao')) &&
-           (entregaAtualizada.Status === 'Entregue' || entregaAtualizada.Status === 'Cancelada')) {
-            
-            // Usamos 'await' para garantir que ele tente promover
-            // antes de retornar a resposta ao usuário.
+        // Lógica da Fila (Promoção Automática)
+        // Se liberou uma vaga crítica (saiu de Rota ou Produção para Finalizado)
+        const estavaOcupandoVaga = (statusAntigo === 'Em Rota' || statusAntigo === 'Producao');
+        const liberouVaga = (entregaAtualizada.Status === 'Entregue' || entregaAtualizada.Status === 'Cancelada');
+
+        if (estavaOcupandoVaga && liberouVaga) {
             await this.#promoverProximaEntrega();
         }
         

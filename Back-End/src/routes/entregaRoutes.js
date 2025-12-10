@@ -45,6 +45,9 @@ router.use(authMiddleware);
  *           type: string
  *           enum: [Pendente, Em Rota, Entregue, Cancelada, Producao]
  *           example: "Entregue"
+ *         quantidadePecas:
+ *           type: Number
+ *           example: 2
  *         criadoEm:
  *           type: string
  *           format: date-time
@@ -89,6 +92,9 @@ router.use(authMiddleware);
  *           type: string
  *           enum: [Pendente, Em Rota, Entregue, Cancelada, Producao]
  *           example: "Entregue"
+ *         quantidadePecas:
+ *           type: Number
+ *           example: 2
  *         produtos:
  *           type: array
  *           items:
