@@ -42,6 +42,14 @@ main {
     justify-content: center;
 }
 
+h3{
+    font-size: 20px !important;
+    margin-bottom: 20px !important;
+}
+p {
+    font-size: 16px !important;
+    color: #9B9B9B !important;
+}
 mainLogin {
     height: 100%;
     background-color: var(--background-color);
@@ -892,6 +900,8 @@ main_historic {
 
 .margin-top10px {
     margin-top: 10px;
+    font-size: 16px !important;
+    color: #9B9B9B !important;
 }
 
 .pedidos {
