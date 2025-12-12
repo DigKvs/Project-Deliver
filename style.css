@@ -463,9 +463,9 @@ mainAboutUs {
     height:90%;
     background-color: var(--background-color);
     display: grid;
-    grid-template-rows: 35% 65% ;
+    grid-template-rows: 30% 35% 35% ;
     grid-template-columns: 1fr;
-    padding: 50px;
+    padding: 80px;
     align-items: center;
     justify-content: center;
 }
@@ -482,8 +482,8 @@ mainAboutUs {
     display: flex;
     padding: 6px;
     background-color: var(--background-light-color);
-    width: 9%;
-    margin: 0px 30px;
+    width: 11%;
+    margin: 0px 80px;
     border-radius: 10px;
     justify-content: center;
     align-items: center;
@@ -494,13 +494,17 @@ mainAboutUs {
     margin-right: 0px;
 }
 
+.aboutustitle{
+    margin: 0px 80px !important;
+}
+
 .aboutUsTop h2 {
     font-size: 200%;
-    margin: 20px 30px;
+    margin: 20px 8%;
 }
 
 .aboutUsTop p {
-    margin: 0px 30px;
+    margin: 0px 80px;
 }
 
 .ourTeam p {
@@ -525,14 +529,12 @@ mainAboutUs p {
     align-items: center;
     justify-content: center;
     grid-template-columns: 1fr;
-    grid-template-rows: 45% 10% 10% 20% 10%;
+    grid-template-rows: 80% 10% 10%;
     width: 10%;
-    height: 80%;
 }
 
 .person {
     height: 175px;
-    border-radius: 50%;
 }
 
 .icons {
@@ -544,14 +546,15 @@ mainAboutUs p {
 
 .cardTeam h5 {
     font-size: 120%;
-    margin: 10px 0px;
-    text-align: center;
+    margin: 0px 0px;
+    text-align: left;
+    margin-bottom: 10px;
 }
 
 .cardTeam h6 {
     font-size: 100%;
     margin-bottom: 15px;
-    text-align: center;
+    text-align: left;
 }
 
 .cardTeam p {
@@ -570,7 +573,7 @@ main_home {
     display: grid;
     grid-template-rows: 70% 30% ;
     grid-template-columns: 1fr;
-    padding: 30px;
+    padding: 80px 128px;
     align-items: center;
     justify-content: center;
 }
@@ -594,10 +597,10 @@ main_home {
 
 .principal1 {
     display: flex;
-    padding: 75px;
+    padding: 50px;
     flex-direction: column;
-    gap: 5px;
-    border-right: var(--cinza-border) 0.5px solid;
+    justify-content: center;
+    border-right: var(--cinza-border) 1px solid;
 }
 
 .limited65 {
@@ -632,9 +635,9 @@ main_home {
     flex-direction: column;
     align-items: start;
     justify-content: center;
-    border-top: var(--cinza-border) 0.5px solid;
-    border-right: var(--cinza-border) 0.5px solid;
-    border-bottom: var(--cinza-border) 0.5px solid;
+    border-top: var(--cinza-border) 1px solid;
+    border-right: var(--cinza-border) 1px solid;
+    border-bottom: var(--cinza-border) 1px solid;
 }
 
 .subprincipal p {
@@ -656,16 +659,7 @@ main_home {
     display: flex;
     align-items: end;
     justify-content: start;
-    border-bottom: var(--cinza-border) 0.5px solid;
-}
-
-main_home2 {
-    height:100%;
-    background-color: var(--background-color);
-    display: flex;
-    padding: 50px;
-    align-items: center;
-    justify-content: center;
+    border-bottom: var(--cinza-border) 1px solid;
 }
 
 .toolsText {
@@ -752,11 +746,11 @@ main_home2 {
 }
 
 .border-right {
-    border-right: var(--cinza-border) 0.5px solid;
+    border-right: var(--cinza-border) 1px solid;
 }
 
 .border-left {
-    border-left: var(--cinza-border) 0.5px solid;
+    border-left: var(--cinza-border) 1px solid;
 }
 
 .separator {
@@ -1073,7 +1067,6 @@ main_historic {
     text-align: right;
     margin-bottom: 0;
 }
-
 
 .select-wrapper select {
     flex-grow: 1;

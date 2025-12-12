@@ -39,7 +39,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 80px 80px 80px 200px;
+    padding: 80px 80px 80px 128px;
     border-right-width: 1px;
     border-right-style: solid;
     border-right-color: var(--outline);
@@ -51,13 +51,13 @@ body {
 .subcontainer1 {
     width: 100%;
     height: 35%;
-    padding: 80px 200px 200px 80px;
+    padding: 80px 128px 128px 80px;
     border-bottom-width: 1px;
     border-bottom-style: solid;
     border-bottom-color: var(--outline);
 }
 .subcontainer2 {
-    padding: 80px 200px 80px 80px;
+    padding: 80px 128px 80px 80px;
     width: 100%;
     height: 65%;
 }
