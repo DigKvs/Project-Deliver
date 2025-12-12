@@ -1,0 +1,31 @@
+# --- Dependências (O peso pesado) ---
+node_modules/
+package-lock.json # Opcional: Alguns preferem commitar, outros não. Padrão é commitar, mas se der conflito, pode ignorar.
+
+# --- Segurança (Segredos e Senhas) ---
+.env
+.env.test
+.env.production
+*.pem
+
+# --- Logs e Erros (Ninguém quer ver isso) ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# --- Lixo de Sistema Operacional (Mac e Windows) ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- IDE e Editores (Configurações da sua máquina) ---
+.vscode/
+.idea/
+*.swp
+
+# --- Pastas de Build (Se você gerar versão final depois) ---
+dist/
+build/
+coverage/
