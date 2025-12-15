@@ -468,6 +468,7 @@ mainAboutUs {
     padding: 80px;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .aboutUsTop {
@@ -476,6 +477,7 @@ mainAboutUs {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-left: 356px;
 }
 
 .ourTeam {
@@ -484,6 +486,7 @@ mainAboutUs {
     background-color: var(--background-light-color);
     width: 11%;
     margin: 0px 80px;
+    margin-bottom: 10px;
     border-radius: 10px;
     justify-content: center;
     align-items: center;
