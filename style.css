@@ -1,5 +1,5 @@
 :root {
-    --primary-color: #005f7c;
+    --primary-color: #34AACA;
     --cinza-border: #262626;
     --background-color: #141414;
     --background-light-color: #222222;
@@ -18,6 +18,10 @@
     color: var(--text-color);
     font-family: "Poppins", sans-serif;
     font-weight: 500;
+}
+
+button{
+    background-color: var(--primary-color);
 }
 
 p {
@@ -58,6 +62,9 @@ mainLogin {
     justify-content: center;
 }
 
+.hugespace{
+    margin-bottom: 20px;
+}
 .center {
     display: flex;
     align-items: center;
@@ -916,7 +923,7 @@ main_historic {
 }
 
 .switch {
-  --_switch-bg-clr: var(--primary-color);
+  --_switch-bg-clr: var(--cinza-border);
   --_switch-padding: 4px;
   --_slider-bg-clr: #9b111e;
   --_slider-bg-clr-on: #9b111e;
@@ -1030,7 +1037,7 @@ main_historic {
 }
 
 .pinChoice {
-    background-color: var(--primary-color);
+    background-color: var(--cinza-border);
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
